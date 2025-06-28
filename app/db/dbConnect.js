@@ -1,31 +1,30 @@
 import mongoose from "mongoose";
 
-const MONGO_URI = process.env.MONGO_URI; // env.local file mein URI hona chahiye
+const MONGO_URI = "mongodb+srv://bilalbilaliqbal25:eventbooKINGx100@cluster0.micwjbp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 if (!MONGO_URI) {
-  throw new Error("Please define MONGO_URI in .env.local");
+  throw new Error("Please define MONGO_URI");
 }
 
-let isConnected = false; // global check
+let isConnected = false;
 
 const connectDB = async () => {
   if (isConnected) {
-    console.log("=> Already connected to MongoDB.");
+    console.log("✅ Already connected");
     return;
   }
 
   try {
-    const db = await mongoose.connect(MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      dbName: "event-booking-system", // optional: aapka DB name
+    // ✅ FIXED — assign result of connect
+    const connection = await mongoose.connect(MONGO_URI, {
+      dbName: "event-booking-system",
     });
 
     isConnected = true;
-    console.log("✅ MongoDB Connected:", db.connection.host);
-  } catch (error) {
-    console.error("❌ MongoDB connection error:", error);
-    throw error;
+    console.log("✅ MongoDB Connected:", connection.connection.host);
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err);
+    throw err;
   }
 };
 
