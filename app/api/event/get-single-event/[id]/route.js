@@ -2,7 +2,7 @@ import connectDB from "@/app/db/dbConnect.js";
 import Event from '@/app/models/event.model.js';
 
 export async function GET(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     await connectDB();
