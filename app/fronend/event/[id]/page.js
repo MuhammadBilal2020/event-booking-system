@@ -5,7 +5,7 @@ import SingleEvent from "@/app/components/SingleEvent";
 export default async function SingleEventPage({ params }) {
   const { id } = await params;
 
-  const res = await fetch(`http://localhost:3000/api/event/get-single-event/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/event/get-single-event/${id}`, {
     cache: 'no-store', // ✅ Important for SSR
   });
 
