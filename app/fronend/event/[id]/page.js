@@ -1,32 +1,25 @@
-import React from 'react'
+// Server Component - SSR
+import SingleEvent from "@/app/components/SingleEvent";
 
-const EventDetail = () => {
+
+export default async function SingleEventPage({ params }) {
+  const { id } = await params;
+
+  const res = await fetch(`http://localhost:3000/api/event/get-single-event/${id}`, {
+    cache: 'no-store', // ✅ Important for SSR
+  });
+
+  if (!res.ok) {
+    return <div className="p-6">Event not found</div>;
+  }
+
+  const event = await res.json();
+
   return (
-    <div>Event Detail</div>
-  )
+   <>
+   <h1>Event Detail</h1>
+   <SingleEvent id ={id} event ={event}/>
+   
+   </>
+  );
 }
-
-export default EventDetail
-
-
-
-// 2. Event Detail Page (Dynamic + SSR)
-// Route: /event/[id]
-
-// Server-side fetch event detail.
-
-// Show full description + “Book Now” button.
-
-
-// ✅ Phase 3: Booking System (Day 4)
-// 1. Booking Form on Event Page
-// Input fields: Name, Email, Phone
-
-// Submit form -> API: POST /api/book
-
-// Store in bookings collection with event ID
-
-// 2. Success Message
-// Show confirmation after booking
-
-// Optionally send confirmation email (optional)

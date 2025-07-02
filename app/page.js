@@ -15,7 +15,7 @@ async function getEvents() {
 
 export default async function Home() {
   const products = await getEvents();
-  console.log(products);
+  // console.log(products);
 
   // useEffect(() => {
   //   const fetchUsers = async () => {

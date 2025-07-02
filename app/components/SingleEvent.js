@@ -1,22 +1,37 @@
-'use client';
+"use client"
+import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react'
+import { HiOutlineDotsVertical } from "react-icons/hi";
 
-import Link from "next/link";
-import { useState } from "react";
-
-export default function AddEventForm({ products }) {
-    
-
-    const [showForm, setShowForm] = useState(false);
-    const [formData, setFormData] = useState({
+const SingleEvent = ({ event }) => {
+  const [open, setOpen] = useState(false);
+  const router = useRouter()
+  const [openForm, setOpenForm] = useState(true)
+   const [title ,setTitle] = useState("")
+  //  const [date ,setDate] = useState("")
+  //  const [location ,setLocation] = useState("")
+  //  const [description ,setDescription] = useState("")
+  const [formData, setFormData] = useState({
         title: '',
         description: '',
         location: '',
         date: ''
     });
+   useEffect(() => {
+  setFormData({
+    title: event.title || "",
+    description: event.description || "",
+    location: event.location || "",
+    date: event.date || ""
+  });
+}, [event]);
 
-    const [event, setEvents] = useState([])
 
-    const handleChange = (e) => {
+
+  const openDropDown = () => setOpen(prev => !prev);
+
+ const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -24,50 +39,73 @@ export default function AddEventForm({ products }) {
         }));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        console.log('Form Data:', formData);
-        // yahan API ya backend se connect karo
+  const deleteEvent = async () => {
+    const res = await fetch("/api/event/delete-event", {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: event._id })
+    });
 
-        try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/event/add-event`,
-
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                }
-            )
-            const newEvent = await res.json();
-            console.log(newEvent);
-
-        }
-        catch (error) {
-            console.log(error);
-
-        }
-    };
-
-    return (
-        <div className="w-full">
+    router.push("/")
 
 
-            {showForm ?
-                <div>
-                    <div className="flex justify-between items-center w-full ">
-                        <div className="w-[54%] text-end">
+  };
 
-                            <h1 >Add New Event</h1>
-                        </div>
-                        <div>
-                            <button onClick={() => setShowForm(prev => !prev)} className="bg-[gray] w-[rem] px-1 py-2">{showForm ? 'close form ' : 'Add New Event'}</button>
-                        </div>
+  const editEvent = async (e) => {
+    e.preventDefault(); // prevent default form reload
+    const res = await fetch("/api/event/edit-event", {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: event._id, ...formData })
 
-                    </div>
+    });
+    const updatedEvent = await res.json()
+    console.log(updatedEvent)
 
-                    <div className=" flex items-center justify-center bg-gradient-to-r from-blue-100 via-white to-blue-100 p-6">
+     setFormData({
+    title: "",
+    description: "",
+    location: "",
+    date: ""
+  });
+  
+    router.push("/")
+    
+  };
 
-                        <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+  return (
+    <>
+      {openForm ?
+        <div className="p-6 max-w-xl mx-auto bg-white shadow-md rounded-xl mt-10">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-blue-700 mb-2">{event.title}</h1>
+
+            {/* Dots + Dropdown */}
+            <div className="relative">
+              <span onClick={openDropDown} className="cursor-pointer">
+                <HiOutlineDotsVertical size={20} />
+              </span>
+
+              {open && (
+                <div className="absolute right-0 mt-2 bg-white shadow-md rounded border border-gray-200 w-[8rem] z-10">
+                  <button onClick={deleteEvent} className="w-full px-4 py-2 hover:bg-gray-100 text-left text-sm text-red-500">
+                    Delete
+                  </button>
+                  <button onClick={() => setOpenForm(false)} className="w-full px-4 py-2 hover:bg-gray-100 text-left text-sm text-blue-500">
+                    Edit
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <p className="mb-3 text-gray-700">{event.description}</p>
+          <p className="text-gray-500">📍 {event.location}</p>
+          <p className="text-gray-500">📅 {event.date}</p>
+        </div>
+        : <div className=" flex items-center justify-center bg-gradient-to-r from-blue-100 via-white to-blue-100 p-6">
+
+                        <form onSubmit={editEvent}  className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
                             <h2 className="text-2xl font-semibold text-blue-600 mb-6 text-center">Book an Event</h2>
 
                             <div className="mb-4">
@@ -129,40 +167,11 @@ export default function AddEventForm({ products }) {
                             </button>
                         </form>
                     </div>
-                </div>
-                :
-
-                <div>
-                    <div className="flex justify-between items-center w-full ">
-                        <div className="w-[50%] text-end">
-
-                            <h1 >Events</h1>
-                        </div>
-                        <div>
-                            <button onClick={() => { setShowForm(true) }} className="bg-[gray] w-[rem] px-1 py-2">{showForm ? 'close form ' : 'Add New Event'}</button>
-                        </div>
-
-                    </div>
-
-                    <div>
-                        <h1 className="text-center text-[1.5rem] font-semibold">List of Events</h1>
-                        <div className="p-4">
-                            {products.map((event) => (
-                                <div
-                                    key={event._id}
-                                    className="bg-white rounded-lg shadow-md p-4 mb-4"
-                                >
-                                    <h2 className="text-xl font-bold">{event.title}</h2>
-                                    <p className="text-sm text-gray-600">📅 {event.date}</p>
-                                    <p className="text-sm text-gray-600">📍 {event.location}</p>
-                                    <p className="mt-2">{event.description}</p>
-                                    <Link href={`/fronend/event/${event._id}`}>detail...</Link>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    );
 }
+    </>
+
+
+  )
+}
+
+export default SingleEvent;
