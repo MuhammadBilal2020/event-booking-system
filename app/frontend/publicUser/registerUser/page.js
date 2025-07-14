@@ -3,15 +3,14 @@
 import { useState } from "react";
 import NoSidebarLayout from "../../layouts/nosidebarlayout";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import PublicUserLayout from "../../layouts/PublicUserLayout";
 
- 
-export default function LoginPage() {
-  const router = useRouter()
+export default function Register() {
   const [formData, setFormData] = useState({
+    username :"",
     email: "",
     password: "",
-    adminSecret: "",
+    role : "publicUser"
   });
 
   const handleChange = (e) => {
@@ -22,47 +21,57 @@ export default function LoginPage() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    const res = await fetch("/api/user/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // 👈 cookies ko receive karne ke liye
-      body: JSON.stringify({
+    e.preventDefault();
+    console.log(formData);
+    // Login logic yahan ayega
+    const res = await fetch('/api/user/auth/signup' , {
+       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({
+        name: formData.username,
         email: formData.email,
         password: formData.password,
-        adminSecret: formData.adminSecret,
-        role: "admin", // ✅ static because this is admin form
+        role: formData.role,               // "admin"
+       
       }),
-    });
+    })
 
-    const data = await res.json();
+    const data =await res.json()
 
-    if (res.ok) {
-      alert("Login successful");
-      // Navigate to dashboard or admin panel
-      router.push("/frontend/admin/dashboard") 
-    } else {
-      alert(data.message || "Login failed");
+    if(res.ok){
+      alert("signup Successfull")
+
     }
-  } catch (error) {
-    console.error("Login error:", error);
-    alert("Something went wrong");
-  }
-};
+    else{
+      alert(data.message)
+    }
 
+
+  };
 
   return (
-    <NoSidebarLayout title={"Login"}>
+    <PublicUserLayout title={"Register"}>
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-xl shadow-md w-full max-w-md"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">Admin Login</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">Signup</h2>
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-gray-600 mb-1">
+            Username
+          </label>
+          <input
+            type="username"
+            name="username"
+            id="username"
+            onChange={handleChange}
+            value={formData.username}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
 
         <div className="mb-4">
           <label htmlFor="email" className="block text-gray-600 mb-1">
@@ -94,35 +103,23 @@ export default function LoginPage() {
           />
         </div>
 
-        <div className="mb-6">
-          <label htmlFor="adminPassword" className="block text-gray-600 mb-1">
-            Admin Password
-          </label>
-          <input
-            type="password"
-            name="adminSecret"
-            id="adminPassword"
-            onChange={handleChange}
-            value={formData.adminSecret}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-         <p className="text-[gray] mb-6 text-[.9rem] text-center">Dont have an account?
+       
+        <p className="text-[gray] mb-6 text-[.9rem] text-center">Already have an account?
         
-       <Link className=" text-[#155dfc]" href={"/frontend/admin/register"}> Create an account first</Link>
+       <Link className=" text-[#155dfc]" href={"/frontend/publicUser/loginUser"}> Go and login</Link>
        </p>
 
         <button
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition duration-200"
         >
-          Login
+          Register
         </button>
+
+
       </form>
       
     </div>
-    </NoSidebarLayout>
+    </PublicUserLayout>
   );
 }
