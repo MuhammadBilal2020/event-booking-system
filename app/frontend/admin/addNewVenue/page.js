@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { MdDelete } from "react-icons/md";
+import handleImageUpload from '@/app/utils/cloudinaryUploader';
 
 export default function AddVenueForm() {
   const [amenities, setAmenities] = useState([{ name: '' }]);
@@ -14,10 +15,10 @@ export default function AddVenueForm() {
     setAmenities([...amenities, { name: '' }]);
   };
 
- const handleDeleteAmenity = (index) => {
-  const updated = amenities.filter((_, i) => i !== index);
-  setAmenities(updated);
-};
+  const handleDeleteAmenity = (index) => {
+    const updated = amenities.filter((_, i) => i !== index);
+    setAmenities(updated);
+  };
 
 
   const handleAmenityChange = (index, value) => {
@@ -33,31 +34,83 @@ export default function AddVenueForm() {
     ]);
   };
 
+  const handleDeleteOffer = (index) =>{
+    const delteOffer = offers.filter((_,i) => i !== index)
+    setOffers(delteOffer)
+  }
+
   const handleOfferChange = (index, field, value) => {
     const updated = [...offers];
     updated[index][field] = value;
     setOffers(updated);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const form = new FormData(e.target);
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  const form = new FormData(e.target);
 
+  const mainImageFile = form.get("mainImage");
+  const galleryImageFiles = form.getAll("galleryImages");
+
+  const cloudName = "dpdxrs2pg";
+  const uploadPreset = "EBS-images";
+
+  try {
+    // Upload main image
+    const [mainImageUrl] = await handleImageUpload(
+      [mainImageFile],
+      uploadPreset,
+      cloudName
+    );
+
+    // Upload gallery images
+    const galleryImageUrls = await handleImageUpload(
+      galleryImageFiles,
+      uploadPreset,
+      cloudName
+    );
+
+    // Prepare final form data
     const formData = {
-      venueName: form.get('venueName'),
-      mainImage: form.get('mainImage'),
-      description: form.get('description'),
-      galleryImages: form.getAll('galleryImages'),
-      venueType: form.get('venueType'),
-      contact: form.get('contact'),
-      location: form.get('location'),
+      venueName: form.get("venueName"),
+      mainImage: mainImageUrl,
+      description: form.get("description"),
+      galleryImages: galleryImageUrls,
+      venueType: form.get("venueType"),
+      contact: form.get("contact"),
+      location: form.get("location"),
       amenities,
       offers,
     };
 
-    console.log('Submitted:', formData);
-    alert('Venue submitted! Check console.');
-  };
+    console.log(formData);
+    
+    // Send to backend
+    const res = await fetch("/api/venue/addVenue", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const result = await res.json();
+    console.log(result);
+    
+
+    if (res.ok) {
+      console.log(result);
+      
+      alert("Venue submitted successfully!");
+    } else {
+      alert(`Error: ${result.error}`);
+    }
+  } catch (err) {
+    console.error("Error submitting venue:", err);
+    alert("Something went wrong!");
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
@@ -100,7 +153,7 @@ export default function AddVenueForm() {
           ></textarea>
         </div>
 
-         {/* Amenities */}
+        {/* Amenities */}
         <div>
           <div className="flex items-center justify-between">
             <label className="text-lg font-semibold text-gray-800">Amenities</label>
@@ -115,31 +168,33 @@ export default function AddVenueForm() {
           </div>
           <div className="mt-2 space-y-2">
             {amenities.map((item, index) => (
-                <>
-                
-               <div className='flex justify-evenly gap-5'>
-                 <input
-                  key={index}
-                  type="text"
-                  placeholder="Amenity"
-                  value={item.name}
-                  onChange={(e) => handleAmenityChange(index, e.target.value)}
-                  required
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                />
+              <>
 
-                 <button
-              type="button"
-              onClick={() => handleDeleteAmenity(index)}
-              className="flex items-center gap-1 text-red-600 hover:text-red-800"
-            >
-              <MdDelete size={20} />
-             Delete
-            </button>
+                <div className='flex justify-evenly gap-5'>
+                  <input
+                    key={index}
+                    type="text"
+                    placeholder="Amenity"
+                    value={item.name}
+                    onChange={(e) => handleAmenityChange(index, e.target.value)}
+                    required
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                  />
 
-               </div>
-                </>
-              
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteAmenity(index)}
+                    className="flex items-center gap-1 text-red-600 hover:text-red-800"
+                  >
+                    <MdDelete size={20} />
+                    Delete
+                  </button>
+
+                  
+
+                </div>
+              </>
+
             ))}
           </div>
         </div>
@@ -162,8 +217,8 @@ export default function AddVenueForm() {
 
           <div className="mt-2 space-y-4">
             {offers.map((offer, index) => (
-              <div key={offer.offerId} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
+              <div key={offer.offerId} className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                <textarea
                   type="text"
                   placeholder="Offer Description"
                   value={offer.offerDescription}
@@ -171,18 +226,40 @@ export default function AddVenueForm() {
                     handleOfferChange(index, 'offerDescription', e.target.value)
                   }
                   required
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                  className=" border border-gray-300 rounded-lg px-4 py-2"
                 />
-                <input
-                  type="number"
-                  placeholder="Offer Price"
-                  value={offer.offerPrice}
-                  onChange={(e) =>
-                    handleOfferChange(index, 'offerPrice', e.target.value)
-                  }
-                  required
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                />
+
+                <div className='flex justify-between items-center'>
+                  <input
+                    type="number"
+                    placeholder="Offer Price"
+                    value={offer.offerPrice}
+                    onChange={(e) =>
+                      handleOfferChange(index, 'offerPrice', e.target.value)
+                    }
+                    required
+                    className="w-[70%] border border-gray-300 rounded-lg px-4 py-2"
+                  />
+                  <div className='flex justify-end gap-5'>
+                    <button
+                    type="button"
+                    onClick={() => handleDeleteOffer(index)}
+                    className="flex items-center text-red-600 hover:text-red-800"
+                  >
+                    <MdDelete size={20} />
+                    Delete
+                  </button>
+                  {/* <button
+                    type="button"
+                    onClick={() => handleOfferChange(index)}
+                    className="flex items-center text-blue-600 hover:text-blue-800"
+                  >
+                    <MdDelete size={20} />
+                    Edit
+                  </button> */}
+                  </div>
+
+                </div>
               </div>
             ))}
           </div>
@@ -233,7 +310,7 @@ export default function AddVenueForm() {
           />
         </div>
 
-       
+
 
         {/* Submit Button */}
         <button

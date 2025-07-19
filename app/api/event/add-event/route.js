@@ -1,7 +1,7 @@
 import connectDB from "@/app/db/dbConnect.js";
 import Event from '@/app/models/event.model.js'
 
-export async function POST(request) {
+export async function POST(request) { 
     try {
         await connectDB()
         const body = await request.json()

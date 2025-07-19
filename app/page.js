@@ -1,39 +1,32 @@
 import React from 'react'
 import PublicUserLayout from './frontend/layouts/PublicUserLayout'
 import VanuesComponent from './frontend/admin/components/venuescomp'
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
-import { redirect } from "next/navigation";
+import { getUserFromServer } from './hooks/getUserFromServer';
 
 const UserDashboard = async() => {
- const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
+ const user = await getUserFromServer();
+  //  console.log(user);
 
-  // if (!token) {
-  //   redirect("/frontend/publicUser/loginUser");
-  // }
+ const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/venue/getVenues`, {
+  cache: 'no-store'
+});
 
-  let user = null;
+const venues = await res.json(); // ✅ Ye lazmi karo warna data parse nahi hoga
+console.log(venues);
 
-  try {
-    user = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-  } catch (err) {
-    // redirect("/frontend/publicUser/loginUser");
-  }
-
-  const vanues = [
-    {
-      vanueId: "34665",
-      vanueName: "Glits Banquet",
-      location: "waterpump",
-      description: "Venue description here...",
-    },
-  ];
+  // const vanues = [
+  //   {
+  //     vanueId: "34665",
+  //     vanueName: "Glits Banquet",
+  //     location: "waterpump",
+  //     description: "Venue description here...",
+  //   },
+  // ];
 
   return (
     <>
     <PublicUserLayout title={"Dashboard"} user={user}>
-      <VanuesComponent vanues ={vanues}/>
+      <VanuesComponent vanues ={venues}/>
       
 
     </PublicUserLayout>

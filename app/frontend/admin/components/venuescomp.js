@@ -3,12 +3,12 @@ import React from 'react'
 
 const VanuesComponent = ({ vanues }) => {
     return (
-        <section className='all-vanues p-3'>
+        <section className='all-vanues p-3 flex gap-[1rem]'>
             {
                 vanues && vanues.length > 0 ? vanues.map((vanue) => {
                     return (
                         <div className='p-3 w-[20rem] shadow-sm text-center' key={vanue.vanueId}>
-                            <Link href={`/frontend/admin/vanue/${vanue.vanueId}`} className='text-[1.5rem]  font-semibold'>{vanue.vanueName}</Link>
+                            <Link href={`/frontend/admin/vanue/${vanue.vanueId}`} className='text-[1.5rem]  font-semibold'>{vanue.venueName}</Link>
                             <p className='mt-2'>{vanue.description}</p>
                             <span>{vanue.location}</span>
                             

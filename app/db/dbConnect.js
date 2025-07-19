@@ -1,21 +1,20 @@
 import mongoose from "mongoose";
 
-const MONGO_URI = "mongodb+srv://bilalbilaliqbal25:eventbooKINGx100@cluster0.micwjbp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const MONGO_URI = process.env.MONGO_URI;
 
 if (!MONGO_URI) {
-  throw new Error("Please define MONGO_URI");
+  throw new Error("Please define MONGO_URI in your environment variables");
 }
 
 let isConnected = false;
 
 const connectDB = async () => {
   if (isConnected) {
-    console.log("✅ Already connected");
+    console.log("✅ Already connected to MongoDB");
     return;
   }
 
   try {
-    // ✅ FIXED — assign result of connect
     const connection = await mongoose.connect(MONGO_URI, {
       dbName: "event-booking-system",
     });
