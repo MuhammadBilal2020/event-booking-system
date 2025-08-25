@@ -9,9 +9,7 @@ const nextConfig = {
     ],
   },
 
-  experimental: {
-    nodeMiddleware: true, // ⚡️ yaha enable karna hai
-  },
+
 };
 
 
