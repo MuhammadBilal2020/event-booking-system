@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"; 
 import React from 'react'
 import PendingBookings from '../components/pendingBookings'
 import MenuLayouts from '../../layouts/MenuLayouts'
