@@ -1,36 +1,54 @@
 import React from 'react'
 import PublicUserLayout from './frontend/layouts/PublicUserLayout'
-import VanuesComponent from './frontend/admin/components/venuescomp'
-import { getUserFromServer } from './hooks/getUserFromServer';
+import { fetchWithRefresh } from './utils/serverInterceptor.js';
+import { cookies } from 'next/headers';
+import VanuesComponent from './frontend/publicUser/components/venuescomp';
 
-const UserDashboard = async() => {
- const user = await getUserFromServer();
-  //  console.log(user);
 
- const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/venue/getVenues`, {
-  cache: 'no-store'
-});
+const UserDashboard = async () => {
 
-const venues = await res.json(); // ✅ Ye lazmi karo warna data parse nahi hoga
-console.log(venues);
+  // const user = getUserFromServer()
+  // console.log(user);
+  
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+  console.log(token);
+  let user;
 
-  // const vanues = [
-  //   {
-  //     vanueId: "34665",
-  //     vanueName: "Glits Banquet",
-  //     location: "waterpump",
-  //     description: "Venue description here...",
-  //   },
-  // ];
+   const res = await fetchWithRefresh("http://localhost:3000/api/auth/me", {
+    headers: {
+      Cookie: `accessToken=${token}`, // manually bhejna padta hai
+    },
+  });
+
+  if (!res.ok) {
+    console.log("Unauthorized or invalid response");
+  } else {
+     user = await res.json();
+    console.log(user);
+  }
+
+
+
+  const res2 = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/venue/getVenues`, {
+    method: "GET",
+    credentials: "include"
+  })
+  const venues = await res2.json();
+  console.log(venues);
+
+
+
+  
 
   return (
     <>
-    <PublicUserLayout title={"Dashboard"} user={user}>
-      <VanuesComponent vanues ={venues}/>
-      
+      <PublicUserLayout title={"Dashboard"} user ={user} >
+        <VanuesComponent venues={venues} />
 
-    </PublicUserLayout>
-   
+
+      </PublicUserLayout>
+
     </>
   )
 }

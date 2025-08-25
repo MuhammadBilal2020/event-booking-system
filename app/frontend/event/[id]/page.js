@@ -9,6 +9,7 @@ export default async function SingleEventPage({ params }) {
     cache: 'no-store', // ✅ Important for SSR
   });
 
+ 
   if (!res.ok) {
     return <div className="p-6">Event not found</div>;
   }

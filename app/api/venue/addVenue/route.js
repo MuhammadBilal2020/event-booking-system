@@ -15,16 +15,16 @@ export async function POST(request) {
 
 
     const body = await request.json()
-    console.log(body);
+    // console.log(body);
     
-    const { venueName, mainImage, description, galleryImages, venueType, contact, location, amenities, offers } = body
+    const { venueName, mainImage, description, galleryImages, venueType, contact, location, offers , status  } = body
 
-    if (!venueName || !venueType || !mainImage || !description || !contact || !location || !amenities || !offers) {
+    if (!venueName || !venueType || !galleryImages  || !mainImage || !description || !contact || !location || !status || !offers) {
         return new Response(JSON.stringify({ error: "required all feilds" }))
     }
 
     const newVenue = await Venue.create({
-        venueName, mainImage, description, galleryImages, venueType, contact, location, amenities, offers
+        venueName, mainImage, description, galleryImages, venueType, contact, location ,status, offers
     })
 
     return new Response(JSON.stringify({ newVenue, message: "Venue created successfully" }), {

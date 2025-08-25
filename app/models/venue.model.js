@@ -2,13 +2,7 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
-// Amenities schema (sub-document)
-const AmenitySchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-});
+
 
 // Offers schema (sub-document)
 const OfferSchema = new Schema({
@@ -56,9 +50,23 @@ const VenueSchema = new Schema({
     type: String,
     required: true,
   },
-  amenities: [AmenitySchema], // array of objects with name
+  status: {
+    type: String,
+    enum: ['active', 'inactive', 'under_maintenance', 'closed'],
+    default: 'active'
+  },
+
+  // availableDates: [{
+  //   type: Date,
+  //   required: true
+  // }],
+
+
+
+
   offers: [OfferSchema],       // array of offers
 }, { timestamps: true });
 
 // Export the model
 export default mongoose.models.Venue || mongoose.model("Venue", VenueSchema);
+// export default mongoose.models.Event || mongoose.model("Event", EventSchema);

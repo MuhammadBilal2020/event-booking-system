@@ -4,15 +4,34 @@ import { useState } from "react";
 import { FaBars } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 import { FaBookmark } from "react-icons/fa";
+import { IoLogOut } from "react-icons/io5";
+
 import { BiSolidDashboard } from "react-icons/bi";
 import { FaVenus } from "react-icons/fa";
 
-export default function Sidebar({title}) {
+export default function Sidebar({ title }) {
     const [open, setOpen] = useState(false);
     const [venueOpen, setVenueOpen] = useState(false);
     const [bookingOpen, setBookingOpen] = useState(false);
     const [settingOpen, setSettingOpen] = useState(false);
 
+// logout function 
+const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        alert("Logout successful");
+        window.location.reload(); // 🔁 Refresh to clear user from client
+        // router.push("/frontend/publicUser/loginUser"); // or homepage
+      }
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
     return (
         <>
@@ -62,7 +81,7 @@ export default function Sidebar({title}) {
                                     <ul className="pl-2">
                                         <li>
                                             <Link
-                                                href="#"
+                                                href={"/frontend/admin/venue/viewAllVenues"}
                                                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group ml-5"
                                             >
                                                 <span className="text-gray-500 group-hover:text-gray-900">•</span>
@@ -71,14 +90,14 @@ export default function Sidebar({title}) {
                                         </li>
                                         <li>
                                             <Link
-                                                href="#"
+                                                href={"/frontend/admin/venue/addNewVenue"}
                                                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group ml-5"
                                             >
                                                 <span className="text-gray-500 group-hover:text-gray-900">•</span>
                                                 <span className="whitespace-nowrap">Add New Venues</span>
                                             </Link>
                                         </li>
-                                          <li>
+                                        <li>
                                             <Link
                                                 href="#"
                                                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group ml-5"
@@ -102,7 +121,7 @@ export default function Sidebar({title}) {
                                     <span>Booking</span>
                                 </button>
                                 {bookingOpen && (
-                                   <ul className="pl-2">
+                                    <ul className="pl-2">
                                         <li>
                                             <Link
                                                 href="#"
@@ -112,19 +131,19 @@ export default function Sidebar({title}) {
                                                 <span className="whitespace-nowrap"> View All Bookings</span>
                                             </Link>
                                         </li>
-                                       
+
                                     </ul>
                                 )}
                             </li>
 
                             {/* Settings */}
                             <li>
-                                <button  onClick={() => setSettingOpen(!settingOpen)} className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group">
+                                <button onClick={() => setSettingOpen(!settingOpen)} className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group">
                                     <IoMdSettings className="text-gray-500 group-hover:text-gray-900" size={20} />
                                     <span>Setting</span>
                                 </button>
                                 {settingOpen && (
-                                   <ul className="pl-2">
+                                    <ul className="pl-2">
                                         <li>
                                             <Link
                                                 href="#"
@@ -152,12 +171,26 @@ export default function Sidebar({title}) {
                                                 <span className="whitespace-nowrap"> All Admins</span>
                                             </Link>
                                         </li>
-                                       
+
                                     </ul>
                                 )}
 
-                                
+
                             </li>
+
+
+                            {/* logout button */}
+
+                            <li className="">
+                                <button  onClick={handleLogout}  className="w-full mt-[14rem]   flex items-center gap-3 p-2 rounded-lg hover:bg-red-100 group">
+                                    <IoLogOut className=" text-gray-500  group-hover:text-gray-900" size={20} />
+                                    <span>Logout</span>
+                                </button>
+                                
+
+
+                            </li>
+
                         </ul>
                     </div>
                 </div>

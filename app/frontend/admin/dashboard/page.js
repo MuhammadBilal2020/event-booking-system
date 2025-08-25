@@ -1,9 +1,41 @@
 import React from 'react'
 import PendingBookings from '../components/pendingBookings'
 import MenuLayouts from '../../layouts/MenuLayouts'
+import { getUserFromServer } from '@/app/hooks/getUserFromServer'
+import { redirect } from 'next/navigation'
+import { fetchWithRefresh } from '@/app/utils/serverInterceptor'
+import { cookies } from 'next/headers'
 
-const AdminDashboard = () => {
+const AdminDashboard = async () => {
+//  const cookieStore = await cookies();
+//   const token = cookieStore.get("accessToken")?.value;
+//   console.log(token);
+//   let user;
+//   // get user from server 
+//    const res = await fetchWithRefresh("http://localhost:3000/api/auth/me", {
+//       headers: {
+//         Cookie: `accessToken=${token}`, // manually bhejna padta hai
+//       },
+//     });
   
+//     if (!res.ok) {
+//       console.log("Unauthorized or invalid response");
+//     } else {
+//        user = await res.json();
+//       console.log(user);
+//     }
+
+
+
+    const user = await getUserFromServer()
+    console.log(user);
+    
+    if(!user || user.role !== 'Admin'){
+      redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/admin/login`
+  )
+      
+    }
+
   return (
 
     <>  

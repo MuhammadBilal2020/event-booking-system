@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 const PendingBookings = () => {
   const booking = [{
     id : "1",
-    event :"Shadi",
+    event :"City",
     bookingDate : "12/4/2025",
     timing : "9:00pm",
     guest : "500",
@@ -18,7 +18,7 @@ const PendingBookings = () => {
      <table className="table-auto w-full text-left  -gray-300">
   <thead className="bg-gray-200">
     <tr>
-      <th className="shadow-sm px-4 py-2">Event</th>
+      <th className="shadow-sm px-4 py-2">Venue</th>
       <th className="shadow-sm px-4 py-2">Booking Date</th>
       <th className="shadow-sm px-4 py-2">Timing</th>
       <th className="shadow-sm px-4 py-2">Guest</th>
@@ -30,7 +30,7 @@ const PendingBookings = () => {
         <tr key={pb.id} className= "shadow-sm hover:bg-gray-100">
          
           <td className="  px-4 py-2">
-            <Link className='hover:text-[red]' href={`/frontend/admin/bookingdetail/${pb.id}`}>{pb.event}</Link>
+            <Link className='hover:text-[red]' href={`/frontend/admin/booking/bookingdetail/${pb.id}`}>{pb.event}</Link>
           </td>
          
           <td className="  px-4 py-2">{pb.bookingDate}</td>
@@ -51,3 +51,17 @@ const PendingBookings = () => {
 }
 
 export default PendingBookings
+
+
+
+
+//amenities: [AmenitySchema], // array of objects with name
+
+
+// Amenities schema (sub-document)
+// const AmenitySchema = new Schema({
+//   name: {
+//     type: String,
+//     required: true,
+//   },
+// });

@@ -1,4 +1,6 @@
 // /utils/verifyTokenAndRole.js
+
+// For backend Apis for permissions
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 
@@ -20,6 +22,7 @@ export async function verifyTokenAndRole(requiredRole) {
       return { success: false, status: 403, message: "only admins have access to add venue" };
     }
 
+    
     return { success: true, user: decoded }; // decoded contains user data
   } catch (err) {
     return { success: false, status: 401, message: "Invalid or expired token" };

@@ -25,7 +25,7 @@ export default function LoginPage() {
   e.preventDefault();
 
   try {
-    const res = await fetch("/api/user/auth/login", {
+    const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,7 +35,7 @@ export default function LoginPage() {
         email: formData.email,
         password: formData.password,
         adminSecret: formData.adminSecret,
-        role: "admin", // ✅ static because this is admin form
+        role: "Admin", // ✅ static because this is admin form
       }),
     });
 

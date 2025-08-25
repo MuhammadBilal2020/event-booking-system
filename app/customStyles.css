@@ -1,0 +1,15 @@
+/* * ----Navbar -----*  */
+
+.gray-border{
+    border-left: 2rem solid rgb(219, 219, 219) ;
+
+}
+
+
+
+/* * ----ROOT PAGE---- * */
+
+.card-border{
+    border-left: 2px solid rgb(183, 183, 183);
+    border-bottom: 3px solid rgb(183, 183, 183); 
+}

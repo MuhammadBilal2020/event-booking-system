@@ -8,7 +8,7 @@ export default function UserNavbar({ user, title }) {
   console.log(user);
   const handleLogout = async () => {
     try {
-      const res = await fetch("/api/user/auth/logout", {
+      const res = await fetch("/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -25,23 +25,23 @@ export default function UserNavbar({ user, title }) {
 
 
   return (
-    <nav className=" p-4 bg-blue-500 text-white flex justify-between items-center shadow-md">
+    <nav className="  text-white flex justify-between items-center shadow-md">
       {/* Left Side */}
-      <div className="text-lg font-semibold">
+      <div className=" w-[30%] p-4   text-lg font-semibold">
         {user ? (
-          <span>{user.name}</span>
+          <span className="text-[black] text-[1.5rem]">{user.name}</span>
         ) : (
-          <Link href="/dashboard">{title}</Link>
+          <Link href="/dashboard" className="text-[black] text-[1.5rem]">{title}</Link>
         )}
       </div>
 
       {/* Right Side */}
-      <div className="relative">
+      <div className="relative  w-[50%] p-[.9rem] curve-border bg-black">
         {user ? (
-          <div>
+          <div className="">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center focus:outline-none"
+              className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center ms-auto  focus:outline-none"
             >
               <span className="text-xl">👤</span>
             </button>
@@ -67,7 +67,7 @@ export default function UserNavbar({ user, title }) {
         ) : (
           <Link
             href="/frontend/publicUser/loginUser"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="ms-auto block w-[6rem] text-center font-semibold text-[#e0e0e0] px-4 py-2 rounded hover:bg-[#ffffffeb] hover:text-[black]"
           >
             Login
           </Link>

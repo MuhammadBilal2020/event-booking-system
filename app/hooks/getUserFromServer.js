@@ -1,16 +1,20 @@
-import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
+import { fetchWithRefresh } from "../utils/serverInterceptor";
+
 
 export async function getUserFromServer() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-
-  if (!token) return null;
-
   try {
-    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-    return decoded;
+    const res = await fetchWithRefresh(
+      "http://localhost:3000/api/auth/me",
+      {},
+      "user" // direct user mode
+    );
+
+    if (!res.ok) return null;
+
+    const user = await res.json();
+    return user;
   } catch (err) {
+    console.error("getUserFromServer error:", err);
     return null;
   }
 }

@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-const MONGO_URI = process.env.MONGO_URI;
+const URI = process.env.MONGO_URI;
 
-if (!MONGO_URI) {
+if (!URI) {
   throw new Error("Please define MONGO_URI in your environment variables");
 }
-
+ 
 let isConnected = false;
 
 const connectDB = async () => {
@@ -15,10 +15,13 @@ const connectDB = async () => {
   }
 
   try {
-    const connection = await mongoose.connect(MONGO_URI, {
+    const connection = await mongoose.connect(URI, {
       dbName: "event-booking-system",
     });
 
+    
+    
+    
     isConnected = true;
     console.log("✅ MongoDB Connected:", connection.connection.host);
   } catch (err) {

@@ -1,4 +1,6 @@
 // utils/getUserFromToken.js
+// For Frontend 
+// for server component 
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 

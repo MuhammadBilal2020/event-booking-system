@@ -6,7 +6,8 @@ const NoSidebarLayout = ({children ,title}) => {
     return (
         <>
             <NoSidebarNav title={title}/>
-            <main className="md:px-[4rem] px-[2rem] pt-[2rem]">{children}</main>
+            <main className="md:px-[4rem] px-[2rem] pt-[2rem] pb-[3rem]">{children}</main>
+
             <Footer />
         </>
     )
