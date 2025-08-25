@@ -1,6 +1,7 @@
 // utils/getUserFromToken.js
 // For Frontend 
 // for server component 
+export const runtime = "nodejs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 

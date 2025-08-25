@@ -1,5 +1,5 @@
 // /utils/verifyTokenAndRole.js
-
+export const runtime = "nodejs";
 // For backend Apis for permissions
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";

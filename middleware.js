@@ -1,4 +1,5 @@
 // middleware.js
+export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import LoginPage from "./app/frontend/admin/login/page";

@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 import connectDB from "@/app/db/dbConnect.js";
 import User from "@/app/models/user.model.js";
 import bcrypt from "bcrypt";
