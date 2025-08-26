@@ -27,7 +27,7 @@ export default function UserNavbar({ user, title }) {
   return (
     <nav className="  text-white flex justify-between items-center shadow-md">
       {/* Left Side */}
-      <div className=" w-[30%] p-4   text-lg font-semibold">
+      <div className=" w-[49%] p-4   text-lg font-semibold">
         {user ? (
           <span className="text-[black] text-[1.5rem]">{user.name}</span>
         ) : (

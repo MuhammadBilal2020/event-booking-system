@@ -19,7 +19,7 @@ export default function Gallery({ venue }) {
       </h2>
 
       {/* Grid Gallery */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-5">
         {venue ? (
           venue.galleryImages.map((image, i) => (
             <motion.div
