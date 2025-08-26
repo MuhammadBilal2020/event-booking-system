@@ -50,9 +50,3 @@ const BookingForm = async ({ params }) => {
 
 export default BookingForm
 
-// acha sahi mgr aba aik aur kam kerna men chahta hoon k available srif next month tak ki ho
-// is k lfunction h mere pass but mujeh ye btao isko direct backend se save kraon venue ki collection k andr , q k mujeh scenerio aesa chye k jese aaj men venue add kerta hoon to 6 onth later tak ki dates available hongi right ,
-// lekin men chahta hoon jese mene aaj add ki h jese 7/26/2025 aaj ki date h
-// aur aaj sesix month tk date available hon, ab date hogi 7/27/2025 to to uske agle six month ki date availble hon matlab jo bhi date ho ose nect six month ki date avalable honi chye
-
-// mere pass ye function h 

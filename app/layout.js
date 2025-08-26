@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./customStyles.css";
 import 'flowbite';
+import { Toaster } from "@/components/ui/sonner";
 
 
 
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
       >
        
           {children}
+          <Toaster />
        
       </body>
     </html>

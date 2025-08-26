@@ -2,6 +2,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function UserNavbar({ user, title }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -14,7 +15,13 @@ export default function UserNavbar({ user, title }) {
       });
 
       if (res.ok) {
-        alert("Logout successful");
+        toast.success("Login Successful", {
+          style: {
+            background: "green",
+            color: "white",
+          },
+        });
+
         window.location.reload(); // 🔁 Refresh to clear user from client
         // router.push("/frontend/publicUser/loginUser"); // or homepage
       }

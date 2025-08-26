@@ -5,6 +5,7 @@ import Link from "next/link";
 import PublicUserLayout from "../../layouts/PublicUserLayout";
 import { useRouter } from "next/navigation";
 import NoSidebarLayout from "../../layouts/nosidebarlayout";
+import { toast } from "sonner";
 
 
 
@@ -51,7 +52,12 @@ export default function LoginUser() {
       const data = await res.json();
 
       if (res.ok) {
-        alert("Login successful");
+        toast.success("Login Successful", {
+          style: {
+            background: "green",
+            color: "white",
+          },
+        });
         // Navigate to dashboard or admin panel
         router.push("/")
       } else {
