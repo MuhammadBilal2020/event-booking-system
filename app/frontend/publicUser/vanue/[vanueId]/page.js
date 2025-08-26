@@ -6,12 +6,13 @@ import { redirect } from 'next/navigation';
 
 
 const VanueDetail = async ({ params }) => {
-  
+
   const { vanueId } = await params
   const user = await getUserFromServer()
   if (!user || user.role !== "publicUser") {
     console.log("for booking u need to login first")
-    redirect("http://localhost:3000/frontend/publicUser/loginUser")
+    redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/publicUser/loginUser`);
+
   }
   console.log(vanueId);
 
@@ -25,7 +26,7 @@ const VanueDetail = async ({ params }) => {
 
 
   return (
-    <VenueDetailComp venue={venue}  />
+    <VenueDetailComp venue={venue} />
   )
 }
 

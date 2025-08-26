@@ -18,7 +18,7 @@ const Venues = async () => {
   // console.log(token);
   // let user;
 
-  // const response = await fetchWithRefresh("http://localhost:3000/api/auth/me", {
+  // const response = await fetchWithRefresh("/api/auth/me", {
   //   headers: {
   //     Cookie: `accessToken=${token}`, // manually bhejna padta hai
   //   },
@@ -33,7 +33,7 @@ const Venues = async () => {
 
 
   if (!user || user.role !== "publicUser") {
-    redirect("http://localhost:3000/frontend/publicUser/loginUser")
+    redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/publicUser/loginUser`)
   }
   const res = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/venue/getVenues`, {
     cache: 'no-store'

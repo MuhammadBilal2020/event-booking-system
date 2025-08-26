@@ -4,7 +4,7 @@ import { fetchWithRefresh } from "../utils/serverInterceptor";
 export async function getUserFromServer() {
   try {
     const res = await fetchWithRefresh(
-      "http://localhost:3000/api/auth/me",
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/me`,
       {},
       "user" // direct user mode
     );

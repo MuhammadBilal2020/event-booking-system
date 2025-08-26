@@ -12,7 +12,7 @@ const BookingForm = async ({ params }) => {
   const user = await getUserFromServer()
   if(!user || user.role !== "publicUser"){
     console.log("for booking u need to login first")
-     redirect("http://localhost:3000/frontend/publicUser/loginUser")
+     redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/publicUser/loginUser`)
 
     
 

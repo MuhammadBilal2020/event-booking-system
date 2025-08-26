@@ -13,7 +13,7 @@ const AdminDashboard = async () => {
 //   console.log(token);
 //   let user;
 //   // get user from server 
-//    const res = await fetchWithRefresh("http://localhost:3000/api/auth/me", {
+//    const res = await fetchWithRefresh("/api/auth/me", {
 //       headers: {
 //         Cookie: `accessToken=${token}`, // manually bhejna padta hai
 //       },

@@ -15,7 +15,7 @@ const UserDashboard = async () => {
   console.log(token);
   let user;
 
-   const res = await fetchWithRefresh("http://localhost:3000/api/auth/me", {
+   const res = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/me`, {
     headers: {
       Cookie: `accessToken=${token}`, // manually bhejna padta hai
     },
