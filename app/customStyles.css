@@ -13,3 +13,52 @@
     border-left: 2px solid rgb(183, 183, 183);
     border-bottom: 3px solid rgb(183, 183, 183); 
 }
+
+
+/* admin dashboard page  */
+
+
+
+
+
+
+.radius-l{
+    border-radius:.8rem 0rem 0rem .8rem;
+}
+
+.radius-r{
+    border-radius:0rem .8rem .8rem 0rem;
+}
+
+.radius-1{
+    border-radius: 1.5rem;
+}
+
+.radius-2{
+    border-radius: 2rem;
+}
+
+.card {
+  animation: fadeUp 1s ease-in-out forwards;
+             /* moveUp 1s ease-in-out forwards; */
+}
+
+
+@keyframes moveUp {
+  from {
+    transform: translateY(50px); /* neeche */
+  }
+  to {
+    transform: translateY(0);     /* upar */
+  }
+}
+
+@keyframes fadeUp {
+ 0%{
+    opacity: 0;
+ }
+
+ 100%{
+    opacity: 1;
+ }
+}

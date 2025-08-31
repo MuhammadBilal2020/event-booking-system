@@ -8,15 +8,16 @@ import { useUser } from '@/app/context/userContext';
 import { useRouter } from 'next/navigation';
 // import { getUserFromServer } from '@/app/hooks/getUserFromServer';
 import { fetchWithRefreshClient } from '@/app/utils/clientInterceptor.js';
+import SubmitButton from '@/app/components/Button';
 
-export default  function AddVenueForm() {
+export default function AddVenueForm() {
   //  const router = useRouter();
   const router = useRouter();
   // const { user } = useUser();
-  
+
   const [isChecking, setIsChecking] = useState(true);
 
-     const [user, setUser] = useState();
+  const [user, setUser] = useState();
 
   // ✅ fetch user in useEffect
   useEffect(() => {
@@ -32,7 +33,7 @@ export default  function AddVenueForm() {
   }, []);
 
   console.log(user);
-  
+
 
   useEffect(() => {
     if (user === undefined) return; // abhi loading hai
@@ -126,14 +127,14 @@ export default  function AddVenueForm() {
       console.log(formData);
 
       // Send to backend
-     const res = await fetchWithRefreshClient("/api/venue/addVenue", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  credentials: "include",   // cookie bhejne ke liye
-  body: JSON.stringify(formData),
-});
+      const res = await fetchWithRefreshClient("/api/venue/addVenue", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",   // cookie bhejne ke liye
+        body: JSON.stringify(formData),
+      });
 
 
       const result = await res.json();
@@ -159,7 +160,7 @@ export default  function AddVenueForm() {
         onSubmit={handleSubmit}
         className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-xl space-y-6"
       >
-        <h1 className="text-3xl font-bold text-gray-800">Add New Venue</h1>
+        <h1 className="text-3xl text-center  font-bold text-gray-800">Add New Venue</h1>
 
         {/* Venue Name */}
         <div>
@@ -168,29 +169,38 @@ export default  function AddVenueForm() {
             type="text"
             name="venueName"
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border focus:bg-[#f9fafb] border-gray-300 rounded-lg px-4 py-2 focus:outline-none "
           />
         </div>
 
         {/* Main Image */}
         <div>
-          <label className="block text-gray-700 font-medium mb-1">Main Image</label>
-          <input
+          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="file_input">Main Image</label>
+          {/* <input
             type="file"
             name="mainImage"
             accept="image/*"
             required
             className="w-full border border-gray-300 rounded-lg p-2 bg-white"
+          /> */}
+          <input
+            className="block w-full text-sm p-2 text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700  dark:border-gray-600 dark:placeholder-gray-400"
+            id="file_input"
+            name="mainImage"
+            type="file"
+            accept="image/*"
+            required
           />
+
         </div>
 
         {/* Description */}
         <div>
-          <label className="block text-gray-700 font-medium mb-1">Description</label>
+          <label className="block  text-gray-700 font-medium mb-1">Description</label>
           <textarea
             name="description"
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 min-h-[100px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 focus:bg-[#f9fafb] rounded-lg px-4 py-2 min-h-[100px] focus:outline-none focus:ring-0"
           ></textarea>
         </div>
 
@@ -267,7 +277,7 @@ export default  function AddVenueForm() {
                     handleOfferChange(index, 'offerDescription', e.target.value)
                   }
                   required
-                  className=" border border-gray-300 rounded-lg px-4 py-2"
+                  className=" border focus:outline-none focus:bg-[#f9fafb] border-gray-300 rounded-lg px-4 py-2"
                 />
 
                 <div className='flex justify-between items-center'>
@@ -279,7 +289,7 @@ export default  function AddVenueForm() {
                       handleOfferChange(index, 'offerPrice', e.target.value)
                     }
                     required
-                    className="w-[70%] border border-gray-300 rounded-lg px-4 py-2"
+                    className="w-[70%] border focus:outline-none focus:bg-[#f9fafb] border-gray-300 rounded-lg px-4 py-2"
                   />
                   <div className='flex justify-end gap-5'>
                     <button
@@ -309,12 +319,21 @@ export default  function AddVenueForm() {
         {/* Gallery Images */}
         <div>
           <label className="block text-gray-700 font-medium mb-1">Gallery Images</label>
-          <input
+          {/* <input
             type="file"
             name="galleryImages"
             multiple
             accept="image/*"
             className="w-full border border-gray-300 rounded-lg p-2 bg-white"
+          /> */}
+           <input
+            className="block w-full text-sm p-2 text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700   dark:border-gray-600 dark:placeholder-gray-400"
+            id="file_input"
+             name="galleryImages"
+             multiple
+            type="file"
+            accept="image/*"
+            required
           />
         </div>
 
@@ -325,7 +344,7 @@ export default  function AddVenueForm() {
             type="text"
             name="venueType"
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+            className="w-full border focus:outline-none focus:bg-[#f9fafb] border-gray-300 rounded-lg px-4 py-2"
           />
         </div>
 
@@ -336,7 +355,7 @@ export default  function AddVenueForm() {
             type="text"
             name="contact"
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+            className="w-full border focus:outline-none focus:bg-[#f9fafb] border-gray-300 rounded-lg px-4 py-2"
           />
         </div>
 
@@ -347,19 +366,20 @@ export default  function AddVenueForm() {
             type="text"
             name="location"
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+            className="w-full border focus:outline-none focus:bg-[#f9fafb] border-gray-300 rounded-lg px-4 py-2"
           />
         </div>
 
 
 
         {/* Submit Button */}
-        <button
+        {/* <button
           type="submit"
           className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-indigo-700 transition"
         >
           Submit Venue
-        </button>
+        </button> */}
+        <SubmitButton title={"Submit"}/>
       </form>
     </div>
   );

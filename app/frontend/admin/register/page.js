@@ -3,6 +3,8 @@
 import { useState } from "react";
 import NoSidebarLayout from "../../layouts/nosidebarlayout";
 import Link from "next/link";
+import SubmitButton from "@/app/components/Button";
+import { toast } from "sonner";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -37,7 +39,13 @@ export default function Register() {
 
     const data = await res.json();
     if (res.ok) {
-      alert("Signup successful");
+      // alert("Signup successful");
+      toast.success("Signup Successful" , {
+        style : {
+          color :"white",
+          background : "green"
+        }
+      })
       // redirect logic here if needed
     } else {
       alert(data.message);
@@ -52,7 +60,8 @@ export default function Register() {
           className="bg-white p-8 rounded-xl shadow-md w-full max-w-md"
         >
           <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">Admin Signup</h2>
-          <div className="mb-4">
+          {/* username  */}
+          {/* <div className="mb-4">
             <label htmlFor="email" className="block text-gray-600 mb-1">
               Username
             </label>
@@ -65,40 +74,75 @@ export default function Register() {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-          </div>
-
-
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-600 mb-1">
-              Email
+          </div> */}
+ <div className="relative mb-6">
+            <input
+              type="username"
+              id="username"
+              name="username"
+              aria-describedby="outlined_success_help"
+              className="block px-2 pb-2 pt-3 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-[#e8e8e8] appearance-none dark:text-white dark:border-[black] focus:[black] focus:outline-none focus:ring-0 focus:border-[#b1b1b1] peer"
+              placeholder=" "
+              onChange={handleChange}
+              value={formData.username}
+              required
+            />
+            <label
+              htmlFor="username"
+              className="absolute text-sm text-[gray] dark:text-[#d4d2d2] duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-1 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+            >
+              Username
             </label>
+          </div>
+          
+
+
+
+          <div className="relative mb-6">
             <input
               type="email"
-              name="email"
               id="email"
+              name="email"
+              aria-describedby="outlined_success_help"
+              className="block px-2 pb-2 pt-3 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-[#e8e8e8] appearance-none dark:text-white dark:border-[black] focus:[black] focus:outline-none focus:ring-0 focus:border-[#b1b1b1] peer"
+              placeholder=" "
               onChange={handleChange}
               value={formData.email}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
+            <label
+              htmlFor="email"
+              className="absolute text-sm text-[gray] dark:text-[#d4d2d2] duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-1 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+            >
+              Email
+            </label>
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-600 mb-1">
-              Password
-            </label>
+
+
+          <div className="relative mb-6">
             <input
               type="password"
-              name="password"
               id="password"
+              name="password"
+              aria-describedby="outlined_success_help"
+              className="block px-2 pb-2 pt-3 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-[#e8e8e8] appearance-none dark:text-white dark:border-[black] focus:[black] focus:outline-none focus:ring-0 focus:border-[#b1b1b1] peer"
+              placeholder=" "
               onChange={handleChange}
               value={formData.password}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
+            <label
+              htmlFor="password"
+              className="absolute text-sm text-[gray] dark:text-[#d4d2d2] duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-1 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+            >
+              Password
+            </label>
           </div>
 
-          <div className="mb-6">
+
+{/* admin secret  */}
+          {/* <div className="mb-6">
             <label htmlFor="adminPassword" className="block text-gray-600 mb-1">
               Admin Password
             </label>
@@ -111,19 +155,34 @@ export default function Register() {
               
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
+          </div> */}
+
+           <div className="relative mb-6">
+            <input
+              type="password"
+              name="adminSecret"
+              id="adminPassword"
+              aria-describedby="outlined_success_help"
+              className="block px-2 pb-2 pt-3 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-[#e8e8e8] appearance-none dark:text-white dark:border-[black] focus:[black] focus:outline-none focus:ring-0 focus:border-[#b1b1b1] peer"
+              placeholder=" "
+              onChange={handleChange}
+              value={formData.adminSecret}
+              required
+            />
+            <label
+              htmlFor="adminPassword"
+              className="absolute text-sm text-[gray] dark:text-[#d4d2d2] duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-1 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+            >
+              Admin Password
+            </label>
           </div>
 
           <p className="text-[gray] mb-6 text-[.9rem] text-center">Already have an account?
 
-            <Link className=" text-[#155dfc]" href={"/frontend/admin/login"}> Go and login</Link>
+            <Link className=" text-[black]" href={"/frontend/admin/login"}> Go and login</Link>
           </p>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition duration-200"
-          >
-            Register
-          </button>
+          <SubmitButton title={"Register"}/>
 
 
         </form>

@@ -6,6 +6,7 @@ import PublicUserLayout from "../../layouts/PublicUserLayout";
 import { useRouter } from "next/navigation";
 import NoSidebarLayout from "../../layouts/nosidebarlayout";
 import { toast } from "sonner";
+import SubmitButton from "@/app/components/Button";
 
 
 
@@ -163,15 +164,7 @@ export default function LoginUser() {
             <Link className=" text-[black]" href={"/frontend/publicUser/registerUser"}> Create an account first</Link>
           </p>
  
-          <button
-            type="submit"
-            className="w-full bg-black text-white py-2 rounded-md font-semibold 
-             border-b-[1px] border-transparent 
-             hover:bg-white hover:text-black hover:border-black 
-             transition duration-200"
-          >
-            Sign in
-          </button>
+          <SubmitButton title={"Sign In"}/>
 
 
         </form>
