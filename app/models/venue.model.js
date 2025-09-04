@@ -10,6 +10,10 @@ const OfferSchema = new Schema({
     type: String,
     required: true,
   },
+  offerName: {
+    type: String,
+    required: true,
+  },
   offerDescription: {
     type: String,
     required: true,

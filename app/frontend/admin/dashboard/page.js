@@ -47,7 +47,7 @@ const AdminDashboard = async () => {
 
 
   const user = await getUserFromServer()
-  console.log(user);
+  // console.log(user);
 
   if (!user || user.role !== 'Admin') {
     redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/admin/login`

@@ -2,6 +2,7 @@
 import React from 'react'
 import { AiFillOpenAI } from "react-icons/ai";
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 const ViewAllVenuesComp = ({ venues }) => {
 
@@ -14,16 +15,31 @@ const ViewAllVenuesComp = ({ venues }) => {
 
         // Reload the page after successful deletion
         if (res.ok) {
+            
             window.location.reload();
+            toast.success("Venue deleted successfully!",
+                {
+                    style: {
+                        background: "green",
+                        color: "white",
+                    },
+                }
+            )
         } else {
             console.error("Failed to delete venue");
+            toast.error(`Error: ${result.error}`, {
+                style: {
+                    background: "red",
+                    color: "white",
+                },
+            });
         }
     };
 
     return (
         <>
             <section>
-                <h1 className='text-[1.4rem] font-medium text-blue-500'>List of Venues</h1>
+                <h1 className='text-[1.4rem] font-medium '>List of Venues</h1>
                 <div>
                     {venues ? venues.map((venue) => {
                         return (

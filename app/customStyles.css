@@ -43,6 +43,11 @@
              /* moveUp 1s ease-in-out forwards; */
 }
 
+.b-record-A{
+  animation: fadeUp .8s ease-in-out forwards;
+
+}
+
 
 @keyframes moveUp {
   from {

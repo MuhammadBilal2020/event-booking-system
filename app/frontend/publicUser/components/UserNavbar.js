@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 export default function UserNavbar({ user, title }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  console.log(user);
+  // console.log(user);
   const handleLogout = async () => {
     try {
       const res = await fetch("/api/auth/logout", {

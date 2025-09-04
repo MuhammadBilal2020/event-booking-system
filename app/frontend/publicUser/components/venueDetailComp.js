@@ -69,7 +69,7 @@ const VenueDetailComp = async ({ venue }) => {
               {venue.offers.map((offer, i) => (
 
                 <AccordionItem className="bg-[#ebebeb] mt-1 px-2" key={offer.offerId} value={`item - ${i + 1}`}>
-                  <AccordionTrigger className="text-[#2e2e2e] text-[1.2rem]">Offer {i + 1}</AccordionTrigger>
+                  <AccordionTrigger className="text-[#2e2e2e] text-[1.2rem]">{offer.offerName}</AccordionTrigger>
                   <AccordionContent className="">
                     <p className="text-[1rem] text-[#313131]">{offer.offerDescription}</p>
                     <p className="text-blue-600 font-semibold text-xl mt-2">

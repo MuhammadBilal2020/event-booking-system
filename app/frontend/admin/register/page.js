@@ -49,6 +49,12 @@ export default function Register() {
       // redirect logic here if needed
     } else {
       alert(data.message);
+        toast.error(`Error: ${data.message}`, {
+                      style: {
+                          background: "red",
+                          color: "white",
+                      },
+                  });
     }
   };
 

@@ -2,6 +2,7 @@ import connectDB from "@/app/db/dbConnect"
 import Venue from "@/app/models/venue.model.js"
 import { verifyTokenAndRole } from "@/app/utils/verifyTokenAndRole.js"
 
+
 export async function POST(request) {
     try {
     await connectDB()
@@ -18,6 +19,7 @@ export async function POST(request) {
     // console.log(body);
     
     const { venueName, mainImage, description, galleryImages, venueType, contact, location, offers , status  } = body
+console.log(body.offers);
 
     if (!venueName || !venueType || !galleryImages  || !mainImage || !description || !contact || !location || !status || !offers) {
         return new Response(JSON.stringify({ error: "required all feilds" }))
@@ -26,6 +28,8 @@ export async function POST(request) {
     const newVenue = await Venue.create({
         venueName, mainImage, description, galleryImages, venueType, contact, location ,status, offers
     })
+    console.log(newVenue);
+    
 
     return new Response(JSON.stringify({ newVenue, message: "Venue created successfully" }), {
         status: 201,

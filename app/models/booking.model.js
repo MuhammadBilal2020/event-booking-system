@@ -32,9 +32,18 @@ const BookingSchema = new Schema({
   
   bookingStatus: {
     type: String,
-    enum: ['pending', 'confirmed', 'cancelled'],
+    enum: ['pending', 'confirmed', 'cancelled' , "rejected"],
     default: 'pending'
   },
+
+  actions: [
+  {
+    adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+    action: { type: String, enum: ['confirmed', 'rejected', 'cancelled'] },
+    at: { type: Date, default: Date.now }
+  }
+],
+
   userNote: {
     type: String
   }

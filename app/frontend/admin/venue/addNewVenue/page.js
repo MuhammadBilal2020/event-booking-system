@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 // import { getUserFromServer } from '@/app/hooks/getUserFromServer';
 import { fetchWithRefreshClient } from '@/app/utils/clientInterceptor.js';
 import SubmitButton from '@/app/components/Button';
+import { toast } from 'sonner';
 
 export default function AddVenueForm() {
   //  const router = useRouter();
@@ -48,7 +49,7 @@ export default function AddVenueForm() {
 
   // const [amenities, setAmenities] = useState([{ name: '' }]);
   const [offers, setOffers] = useState([
-    { offerId: uuidv4(), offerDescription: '', offerPrice: '' },
+    { offerId: uuidv4(), offerName: "", offerDescription: '', offerPrice: '' },
   ]);
 
   // const handleAddAmenity = () => {
@@ -70,7 +71,7 @@ export default function AddVenueForm() {
   const handleAddOffer = () => {
     setOffers([
       ...offers,
-      { offerId: uuidv4(), offerDescription: '', offerPrice: '' },
+      { offerId: uuidv4(), offerName: "", offerDescription: '', offerPrice: '' },
     ]);
   };
 
@@ -124,7 +125,7 @@ export default function AddVenueForm() {
         status: 'active'
       };
 
-      console.log(formData);
+      console.log(formData); 
 
       // Send to backend
       const res = await fetchWithRefreshClient("/api/venue/addVenue", {
@@ -144,9 +145,29 @@ export default function AddVenueForm() {
       if (res.ok) {
         console.log(result);
 
-        alert("Venue submitted successfully!");
+        // alert("Venue submitted successfully!");
+        toast.success("Venue submitted successfully!",
+          {
+            style: {
+              background: "green",
+              color: "white",
+            },
+          }
+        )
+        e.target.reset();
+        setOffers([
+          { offerId: uuidv4(), offerName: "", offerDescription: '', offerPrice: '' }
+        ]);
+
+
       } else {
-        alert(`Error: ${result.error}`);
+        // alert(`Error: ${result.error}`);
+          toast.error(`Error: ${result.error}`, {
+                        style: {
+                            background: "red",
+                            color: "white",
+                        },
+                    });
       }
     } catch (err) {
       console.error("Error submitting venue:", err);
@@ -269,6 +290,17 @@ export default function AddVenueForm() {
           <div className="mt-2 space-y-4">
             {offers.map((offer, index) => (
               <div key={offer.offerId} className="grid grid-cols-1 md:grid-cols-1 gap-4">
+
+                <input
+                    type="text"
+                    placeholder="Offer Name"
+                    value={offer.offerName}
+                    onChange={(e) =>
+                      handleOfferChange(index, 'offerName', e.target.value)
+                    }
+                    required
+                    className="w-[100%] border focus:outline-none focus:bg-[#f9fafb] border-gray-300 rounded-lg px-4 py-2"
+                  />
                 <textarea
                   type="text"
                   placeholder="Offer Description"
@@ -289,13 +321,13 @@ export default function AddVenueForm() {
                       handleOfferChange(index, 'offerPrice', e.target.value)
                     }
                     required
-                    className="w-[70%] border focus:outline-none focus:bg-[#f9fafb] border-gray-300 rounded-lg px-4 py-2"
+                    className="w-[80%] border focus:outline-none focus:bg-[#f9fafb] border-gray-300 rounded-lg px-4 py-2"
                   />
                   <div className='flex justify-end gap-5'>
                     <button
                       type="button"
                       onClick={() => handleDeleteOffer(index)}
-                      className="flex items-center text-red-600 hover:text-red-800"
+                      className="flex gap-1 items-center text-red-600 hover:text-red-800"
                     >
                       <MdDelete size={20} />
                       Delete
@@ -326,11 +358,11 @@ export default function AddVenueForm() {
             accept="image/*"
             className="w-full border border-gray-300 rounded-lg p-2 bg-white"
           /> */}
-           <input
+          <input
             className="block w-full text-sm p-2 text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700   dark:border-gray-600 dark:placeholder-gray-400"
             id="file_input"
-             name="galleryImages"
-             multiple
+            name="galleryImages"
+            multiple
             type="file"
             accept="image/*"
             required
@@ -379,7 +411,7 @@ export default function AddVenueForm() {
         >
           Submit Venue
         </button> */}
-        <SubmitButton title={"Submit"}/>
+        <SubmitButton title={"Submit"} />
       </form>
     </div>
   );

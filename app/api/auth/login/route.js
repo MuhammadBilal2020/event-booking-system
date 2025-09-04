@@ -40,7 +40,7 @@ export async function POST(request) {
     const accessToken = jwt.sign(
       { userId: user._id.toString(), role: user.role, email: user.email, name: user.name },
       process.env.JWT_ACCESS_SECRET,
-      { expiresIn: "1m" }
+      { expiresIn: "15m" }
     );
 
     const refreshToken = jwt.sign(
@@ -67,7 +67,7 @@ export async function POST(request) {
     secure: false,
     sameSite: "lax",
     path: "/",
-    maxAge: 1 * 60, // 15 minutes in seconds
+    maxAge: 515 * 60, // 15 minutes in seconds
   });
 
   res.cookies.set("refreshToken", refreshToken, {

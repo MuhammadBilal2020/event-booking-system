@@ -55,6 +55,12 @@ export default function LoginPage() {
         router.push("/frontend/admin/dashboard")
       } else {
         alert(data.message || "Login failed");
+          toast.error(`Error: ${data.message} || login Failed`, {
+                        style: {
+                            background: "red",
+                            color: "white",
+                        },
+                    });
       }
     } catch (error) {
       console.error("Login error:", error);

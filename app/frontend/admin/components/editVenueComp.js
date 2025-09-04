@@ -4,9 +4,10 @@ import { v4 as uuidv4 } from "uuid";
 import { AiOutlinePlus } from "react-icons/ai";
 import { MdDelete } from "react-icons/md";
 import handleImageUpload from "@/app/utils/cloudinaryUploader";
+import { toast } from "sonner";
 
 const EditVenueComp = ({ venue, editId }) => {
-  const [amenities, setAmenities] = useState([]);
+  // const [amenities, setAmenities] = useState([]);
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [deletedGalleryImages, setDeletedGalleryImages] = useState([]);
@@ -30,21 +31,21 @@ const EditVenueComp = ({ venue, editId }) => {
   // Prefill on load
   useEffect(() => {
     if (venue) {
-      setAmenities(venue.amenities || []);
+      // setAmenities(venue.amenities || []);
       setOffers(venue.offers || []);
     }
   }, [venue]);
 
-  const handleAddAmenity = () => setAmenities([...amenities, { name: "" }]);
+  // const handleAddAmenity = () => setAmenities([...amenities, { name: "" }]);
 
-  const handleDeleteAmenity = (index) =>
-    setAmenities(amenities.filter((_, i) => i !== index));
+  // const handleDeleteAmenity = (index) =>
+  //   setAmenities(amenities.filter((_, i) => i !== index));
 
-  const handleAmenityChange = (index, value) => {
-    const updated = [...amenities];
-    updated[index].name = value;
-    setAmenities(updated);
-  };
+  // const handleAmenityChange = (index, value) => {
+  //   const updated = [...amenities];
+  //   updated[index].name = value;
+  //   setAmenities(updated);
+  // };
 
   const handleAddOffer = () =>
     setOffers([
@@ -111,7 +112,7 @@ const EditVenueComp = ({ venue, editId }) => {
         venueType: form.get("venueType"),
         contact: form.get("contact"),
         location: form.get("location"),
-        amenities,
+        // amenities,
         offers,
       };
 
@@ -134,9 +135,23 @@ const EditVenueComp = ({ venue, editId }) => {
       setLoading(false);
 
       if (res.ok) {
-        alert("Venue updated successfully!");
+        // alert("Venue updated successfully!");
+        toast.success("Venue Updated Successfully" , 
+          {
+          style: {
+            background: "green",
+            color: "white",
+          },
+        }
+        )
       } else {
-        alert(`Error: ${result.error}`);
+          toast.error(`Error: ${result.error}`, {
+                        style: {
+                            background: "red",
+                            color: "white",
+                        },
+                    });
+        // alert(`Error: ${result.error}`);
       }
     } catch (err) {
       console.error("Update error:", err);
@@ -148,7 +163,7 @@ const EditVenueComp = ({ venue, editId }) => {
   if (!venue) return <p>Loading venue...</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4">
+    <div className="min-h-screen  py-10 px-4">
       <form
         onSubmit={handleSubmit}
         className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-xl space-y-6"
@@ -162,7 +177,7 @@ const EditVenueComp = ({ venue, editId }) => {
             name="venueName"
             defaultValue={venue.venueName}
             required
-            className="w-full border rounded-lg px-4 py-2"
+            className="w-full border focus:outline-none focus:bg-[#f9fafb] rounded-lg px-4 py-2"
           />
         </div>
         <div>
@@ -173,7 +188,7 @@ const EditVenueComp = ({ venue, editId }) => {
     type="file"
     name="mainImage"
     accept="image/*"
-    className="w-full border rounded-lg p-2 mb-2"
+    className="block w-full text-sm p-2 text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700   dark:border-gray-600 dark:placeholder-gray-400"
     onChange={(e) => {
       const file = e.target.files[0];
       if (file) {
@@ -185,7 +200,7 @@ const EditVenueComp = ({ venue, editId }) => {
 
   {/* Image Preview */}
   {mainImagePreview && !deletedMainImage && (
-    <div className="relative w-fit">
+    <div className="relative w-fit mt-4">
       <img
         src={mainImagePreview}
         alt="Main Image Preview"
@@ -214,12 +229,12 @@ const EditVenueComp = ({ venue, editId }) => {
             name="description"
             defaultValue={venue.description}
             required
-            className="w-full border rounded-lg px-4 py-2 min-h-[100px]"
+            className="w-full border focus:outline-none focus:bg-[#f9fafb] rounded-lg px-4 py-2 min-h-[100px]"
           ></textarea>
         </div>
 
         {/* Amenities */}
-        <div>
+        {/* <div>
           <div className="flex justify-between">
             <label className="text-lg font-semibold">Amenities</label>
             <button type="button" onClick={handleAddAmenity} className="text-blue-600 flex items-center gap-1">
@@ -234,7 +249,7 @@ const EditVenueComp = ({ venue, editId }) => {
                   value={item.name}
                   onChange={(e) => handleAmenityChange(index, e.target.value)}
                   required
-                  className="w-full border rounded-lg px-4 py-2"
+                  className="w-full border focus:outline-none focus:bg-[#f9fafb] rounded-lg px-4 py-2"
                 />
                 <button type="button" onClick={() => handleDeleteAmenity(index)} className="text-red-600">
                   <MdDelete size={20} />
@@ -242,7 +257,7 @@ const EditVenueComp = ({ venue, editId }) => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Offers */}
         <div>
@@ -260,7 +275,7 @@ const EditVenueComp = ({ venue, editId }) => {
                   value={offer.offerDescription}
                   onChange={(e) => handleOfferChange(index, "offerDescription", e.target.value)}
                   required
-                  className="w-full border rounded-lg px-4 py-2"
+                  className="w-full border focus:outline-none focus:bg-[#f9fafb] rounded-lg px-4 py-2"
                 />
                 <div className="flex gap-4 items-center">
                   <input
@@ -269,7 +284,7 @@ const EditVenueComp = ({ venue, editId }) => {
                     value={offer.offerPrice}
                     onChange={(e) => handleOfferChange(index, "offerPrice", e.target.value)}
                     required
-                    className="w-full border rounded-lg px-4 py-2"
+                    className="w-full border focus:outline-none focus:bg-[#f9fafb] rounded-lg px-4 py-2"
                   />
                   <button type="button" onClick={() => handleDeleteOffer(index)} className="text-red-600">
                     <MdDelete size={20} />
@@ -283,7 +298,7 @@ const EditVenueComp = ({ venue, editId }) => {
         {/* Gallery */}
         <div>
           <label className="block mb-1">Gallery Images</label>
-          <input type="file" name="galleryImages" multiple accept="image/*" className="w-full border rounded-lg p-2" />
+          <input type="file" name="galleryImages" multiple accept="image/*" className="block w-full text-sm p-2 text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700   dark:border-gray-600 dark:placeholder-gray-400" />
         </div>
 
 
@@ -313,7 +328,7 @@ const EditVenueComp = ({ venue, editId }) => {
             name="venueType"
             defaultValue={venue.venueType}
             required
-            className="w-full border rounded-lg px-4 py-2"
+            className="w-full border focus:outline-none focus:bg-[#f9fafb] rounded-lg px-4 py-2"
           />
         </div>
 
@@ -326,7 +341,7 @@ const EditVenueComp = ({ venue, editId }) => {
             name="contact"
             defaultValue={venue.contact}
             required
-            className="w-full border rounded-lg px-4 py-2"
+            className="w-full border focus:outline-none focus:bg-[#f9fafb] rounded-lg px-4 py-2"
           />
         </div>
 
@@ -337,14 +352,17 @@ const EditVenueComp = ({ venue, editId }) => {
             name="location"
             defaultValue={venue.location}
             required
-            className="w-full border rounded-lg px-4 py-2"
+            className="w-full border focus:outline-none focus:bg-[#f9fafb] rounded-lg px-4 py-2"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-indigo-700 transition"
+          className="w-full bg-black text-white py-2 rounded-md font-semibold 
+             border-b-[1px] border-transparent 
+             hover:bg-white hover:text-black hover:border-black 
+             transition duration-200"
         >
           {loading ? "Updating..." : "Update Venue"}
         </button>

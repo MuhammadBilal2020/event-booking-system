@@ -8,7 +8,7 @@ const SubmitButton = ({title}) => {
             className="w-full bg-black text-white py-2 rounded-md font-semibold 
              border-b-[1px] border-transparent 
              hover:bg-white hover:text-black hover:border-black 
-             transition duration-200"
+             transition duration-200" 
           >
             {title}
           </button>

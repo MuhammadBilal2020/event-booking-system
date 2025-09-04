@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaBars } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 import { FaBookmark } from "react-icons/fa";
@@ -8,14 +8,41 @@ import { IoLogOut } from "react-icons/io5";
 import { BiSolidDashboard } from "react-icons/bi";
 import { FaVenus } from "react-icons/fa";
 
+import { fetchWithRefreshClient } from "@/app/utils/clientInterceptor";
+
 export default function Sidebar({ title }) {
   const [open, setOpen] = useState(false);
   const [venueOpen, setVenueOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [settingOpen, setSettingOpen] = useState(false);
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    (async () => {
+      const res = await fetchWithRefreshClient("/api/auth/me", {}, "user");
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data);
+      } else {
+        setUser(null);
+      }
+    })();
+  }, []);
+
+  console.log(user);
+
+
+  useEffect(() => {
+    if (user === undefined) return; // abhi loading hai
+
+    if (!user || user.role !== "Admin") {
+      router.push("/frontend/admin/login");
+    }
+  }, [user]);
 
   // logout function
   const handleLogout = async () => {
+
     try {
       const res = await fetch("/api/auth/logout", {
         method: "POST",
@@ -52,13 +79,13 @@ export default function Sidebar({ title }) {
         ${open ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="bg-white p-[.85rem] text-black">
-            <h5 className="text-base font-semibold uppercase">Menu</h5>
-        <button
-          onClick={() => setOpen(false)}
-          className="absolute top-2.5 right-2.5 p-1.5 rounded-lg"
-        >
-          ✖
-        </button>
+          <h5 className="text-base font-semibold uppercase">Menu</h5>
+          <button
+            onClick={() => setOpen(false)}
+            className="absolute top-2.5 right-2.5 p-1.5 rounded-lg"
+          >
+            ✖
+          </button>
         </div>
 
         <div className="py-4">
@@ -66,7 +93,7 @@ export default function Sidebar({ title }) {
             {/* Dashboard */}
             <li>
               <Link
-                href="#"
+                href="/frontend/admin/dashboard"
                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 hover:text-black group"
               >
                 <BiSolidDashboard
@@ -90,9 +117,8 @@ export default function Sidebar({ title }) {
                 <span>Venue</span>
               </button>
               <ul
-                className={`pl-2 transition-all duration-300 ${
-                  venueOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-                } overflow-hidden`}
+                className={`pl-2 transition-all duration-300 ${venueOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                  } overflow-hidden`}
               >
                 <li>
                   <Link
@@ -143,9 +169,8 @@ export default function Sidebar({ title }) {
                 <span>Booking</span>
               </button>
               <ul
-                className={`pl-2 transition-all duration-300 ${
-                  bookingOpen ? "max-h-20 opacity-100" : "max-h-0 opacity-0"
-                } overflow-hidden`}
+                className={`pl-2 transition-all duration-300 ${bookingOpen ? "max-h-20 opacity-100" : "max-h-0 opacity-0"
+                  } overflow-hidden`}
               >
                 <li>
                   <Link
@@ -174,20 +199,20 @@ export default function Sidebar({ title }) {
                 <span>Setting</span>
               </button>
               <ul
-                className={`pl-2 transition-all duration-300 ${
-                  settingOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-                } overflow-hidden`}
+                className={`pl-2 transition-all duration-300 ${settingOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                  } overflow-hidden`}
               >
                 <li>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group ml-5"
-                  >
-                    <span className="text-gray-500 group-hover:text-gray-900">
-                      •
-                    </span>
-                    <span className="whitespace-nowrap hover:text-black">Profile</span>
-                  </Link>
+                  {user && (
+                    <Link
+                      href={`/frontend/admin/profile/${user.userId}`}
+                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group ml-5"
+                    >
+                      <span className="text-gray-500 group-hover:text-gray-900">•</span>
+                      <span className="whitespace-nowrap hover:text-black">Profile</span>
+                    </Link>
+                  )}
+
                 </li>
                 <li>
                   <Link

@@ -3,7 +3,7 @@ import Event from '@/app/models/event.model.js';
 
 export async function GET(request, { params }) {
   const { id } = await params;
-
+ 
   try {
     await connectDB();
 
