@@ -1,11 +1,19 @@
 
 import connectDB from "@/app/db/dbConnect";
 import Venue from "@/app/models/venue.model.js"
+import { verifyTokenAndRole } from "@/app/utils/verifyTokenAndRole";
 import { cookies } from "next/headers";
 
-export async function GET(){
+export async function GET(){ 
 try {
     await connectDB()
+    //  const authResult = await verifyTokenAndRole("Admin")   
+    //     if (!authResult.success) {
+    //         return new Response(JSON.stringify({ error: authResult.message }), {
+    //             status: authResult.status
+    //         }
+    //         )
+    //     }
      
     const allVenues = await Venue.find()
     

@@ -4,15 +4,15 @@ import { IoEye } from "react-icons/io5";
 import { motion } from "framer-motion";
 
 
-const ProfileBookingRecords = ({bookings}) => {
+const ProfileBookingRecords = ({ bookings }) => {
 
-    const [selectedStatus, setSelectedStatus] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("All");
 
-     // filter logic
+  // filter logic
   const filteredBookings =
     selectedStatus === "All"
       ? bookings
-      : bookings.filter(b => b.status === selectedStatus.toLowerCase());
+      : bookings.filter(b => b.bookingStatus === selectedStatus.toLowerCase());
 
   // alag bg colors
   const getStatusColor = (status) => {
@@ -27,18 +27,17 @@ const ProfileBookingRecords = ({bookings}) => {
         return "bg-gray-400 text-white";
     }
   };
- return (
+  return (
     <div className='mb-[4rem] mt-4 px-4' >
-        <h1 className='font-semibold text-[1.3rem]'>Booking Handling Records</h1>
+      <h1 className='font-semibold text-[1.3rem]'>Booking Handling Records</h1>
       {/* Buttons */}
       <div className='flex gap-3 mt-4'>
         {["All", "Confirmed", "Rejected", "Cancelled"].map((status) => (
           <button
             key={status}
             onClick={() => setSelectedStatus(status)}
-            className={`px-3 py-1 rounded ${
-              selectedStatus === status ? "bg-black text-white" : "bg-gray-200"
-            }`}
+            className={`px-3 py-1 rounded ${selectedStatus === status ? "bg-black text-white" : "bg-gray-200"
+              }`}
           >
             {status}
           </button>
@@ -60,13 +59,14 @@ const ProfileBookingRecords = ({bookings}) => {
           <tbody>
             {filteredBookings.length > 0 ? (
               filteredBookings.map((booking, i) => (
-                <tr key={booking.id + selectedStatus} className="bg-[#e0dfdf] b-record-A">
-                  <td className="px-6 py-4 font-medium">{booking.bookingVenue}</td>
-                  <td className="px-6 py-4">{booking.Date}</td>
-                  <td className="px-6 py-4">{booking.booker}</td>
+                <tr key={booking._id + selectedStatus} className="bg-[#e0dfdf] b-record-A">
+                  <td className="px-6 py-4 font-medium">{booking.venueId.venueName}</td>
+                  <td className="px-6 py-4">{new Date(booking.date).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4">{booking.userId.name}</td>
                   <td className="">
-                    <span className={`px-3 w-[6rem] text-center inline-block py-1 rounded ${getStatusColor(booking.status)}`}>
-                      {booking.status}
+                    <span className={`px-3 w-[6rem] text-center inline-block py-1 rounded ${getStatusColor(booking.bookingStatus)}`}>
+                      {booking.bookingStatus}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">

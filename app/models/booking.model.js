@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const BookingSchema = new Schema({
   venueId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Venue',
+    ref: 'Venue', 
     required: true
   },
   userId: {
@@ -38,7 +38,7 @@ const BookingSchema = new Schema({
 
   actions: [
   {
-    adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+    adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     action: { type: String, enum: ['confirmed', 'rejected', 'cancelled'] },
     at: { type: Date, default: Date.now }
   }

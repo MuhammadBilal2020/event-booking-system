@@ -1,6 +1,5 @@
 export const dynamic = "force-dynamic";
-import React from 'react'
-import PendingBookings from '../components/pendingBookings'
+import React, { cache } from 'react'
 import MenuLayouts from '../../layouts/MenuLayouts'
 import { getUserFromServer } from '@/app/hooks/getUserFromServer'
 import { redirect } from 'next/navigation'
@@ -9,44 +8,28 @@ import { cookies } from 'next/headers'
 import { Badge } from '@/components/ui/badge';
 import { Merienda } from "next/font/google"
 import { IoFilter } from "react-icons/io5";
-import { IoEye } from "react-icons/io5";
+import PendingBookingsTable from '../components/pendingBookingTable';
 
 const meriendaFont = Merienda({
   subsets: ['latin'],
   weight: "700",
 });
 
-
+ 
 const AdminDashboard = async () => {
-
-  const bookings = [
-    { bookingVenue: "Royal", booker: "Sami", Date: "2/10/2025", status: "pending" },
-    { bookingVenue: "Lavish", booker: "bilal", Date: "5/8/2025", status: "pending" },
-    { bookingVenue: "City", booker: "hamza", Date: "6/8/2025", status: "pending" },
-   
-
+  let bookings = [
+    
   ]
-  //  const cookieStore = await cookies();
-  //   const token = cookieStore.get("accessToken")?.value;
-  //   console.log(token);
-  //   let user;
-  //   // get user from server 
-  //    const res = await fetchWithRefresh("/api/auth/me", {
-  //       headers: {
-  //         Cookie: `accessToken=${token}`, // manually bhejna padta hai
-  //       },
-  //     });
-
-  //     if (!res.ok) {
-  //       console.log("Unauthorized or invalid response");
-  //     } else {
-  //        user = await res.json();
-  //       console.log(user);
-  //     }
+  let cardData;
+// send cookies with every request 
+  const cookieStore = await cookies();
+    const token = cookieStore.get("accessToken")?.value;
+    console.log(token);
+    
 
 
-
-  const user = await getUserFromServer()
+    // get user from cookies 
+   const user = await getUserFromServer()
   // console.log(user);
 
   if (!user || user.role !== 'Admin') {
@@ -54,6 +37,65 @@ const AdminDashboard = async () => {
     )
 
   }
+
+    
+    // get pending bookings 
+    try {
+
+      const res = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/booking/getPendingBookings` ,
+     {
+            cache: 'no-store',
+            mothod : "GET",
+            headers: {
+      Cookie: `accessToken=${token}`, // manually bhejna padta hai
+    },
+            
+        }
+     
+  )
+   if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
+  const getPendings = await res.json();
+  console.log(getPendings);
+  
+bookings = getPendings.bookings || []; // yahan array mil gya
+      
+    } catch (error) {
+    console.error("Failed to fetch bookings:", error.message);
+      
+    }
+  
+  
+ 
+
+// get cards data 
+
+try {
+  const res3 = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/special/getDashboardCards` , {
+    method:"GET",
+  cache : 'no-store',
+    headers: {
+      Cookie: `accessToken=${token}`, // manually bhejna padta hai
+    },
+})
+
+if (!res3.ok) {
+      throw new Error(`HTTP error! Status: ${res3.status}`);
+    }
+
+ cardData = await res3.json()
+console.log(cardData);
+} catch (error) {
+  console.error("Failed to fetch bookings:", error.message);
+}
+
+
+
+
+
+ 
 
   return (
 
@@ -76,7 +118,7 @@ const AdminDashboard = async () => {
                 </p>
               </div>
 
-              <p className='text-[2.3rem] mt-3'>27</p>
+              <p className='text-[2.3rem] mt-3'>{cardData.todayBookings}</p>
             </div>
 
             {/* New Bookings Today */}
@@ -90,7 +132,7 @@ const AdminDashboard = async () => {
                 </p>
               </div>
 
-              <p className='text-[2.3rem] mt-3'>6</p>
+              <p className='text-[2.3rem] mt-3'>{cardData.newBookings}</p>
               <button className=' text-blue-400 ms-auto block'>View</button>
             </div>
 
@@ -103,7 +145,7 @@ const AdminDashboard = async () => {
                 </p>
               </div>
 
-              <p className='text-[2.3rem] mt-3'>20</p>
+              <p className='text-[2.3rem] mt-3'>{cardData.pendingRequests}</p>
               <button className=' text-blue-400 ms-auto block'>View</button>
             </div>
 
@@ -126,7 +168,7 @@ const AdminDashboard = async () => {
                 </p>
               </div>
 
-              <p className='text-[2.3rem] mt-3'>9</p>
+              <p className='text-[2.3rem] mt-3'>{cardData.availableVenues}</p>
               <button className=' text-blue-400 ms-auto block'>View</button>
             </div>
           </div>
@@ -135,7 +177,7 @@ const AdminDashboard = async () => {
 
         </section>
 
-        <section className='booking-status  pb-[3.5rem] px-[2rem]'>
+        {/* <section className='booking-status  pb-[3.5rem] px-[2rem]'>
           <div className="relative overflow-x-auto  sm:rounded-lg">
             <table className="w-full border-separate border-spacing-y-2 text-sm text-left rtl:text-right ">
               <caption className="pt-5 pb-3 text-lg font-semibold text-left rtl:text-right text-gray-900  dark:text-white dark:bg-gray-800">
@@ -171,20 +213,17 @@ const AdminDashboard = async () => {
                         scope="row"
                         className="px-6 py-4 radius-l font-medium text-gray-900 whitespace-nowrap dark:text-white"
                       >
-                        {booking.bookingVenue}
+                        {booking.venueId.venueName}
                       </td>
-                      <td className="px-6 py-4 ">{booking.Date}</td>
-                      <td className="px-6 py-4">{booking.booker}</td>
+                      <td className="px-6 py-4 ">{new Date(booking.date).toLocaleDateString()}</td>
+                      <td className="px-6 py-4">{booking.userId.name}</td>
                       <td className="px-6 py-4 "><span className='bg-[red] px-[.6rem] pt-[.2rem] radius-1 pb-[.25rem]'>
-                        {booking.status}
+                        {booking.bookingStatus}
                         </span></td>
-                      <td className="px-6 py-4 radius-r text-right">
-                        <a
-                          href="#"
-                          className="font-medium  hover:underline"
-                        >
-                         <IoEye size={20}/>
-                        </a>
+                      <td className=" py-4 radius-r flex gap-3 justify-center  ">
+                        <button className='bg-[#129e12] text-white block w-[6rem] p-2'>Accept</button>
+                        <button className='bg-[blue] text-white block w-[6rem] p-2'>Reject</button>
+
                       </td>
                     </tr> 
                    
@@ -199,8 +238,10 @@ const AdminDashboard = async () => {
           </div>
 
 
-        </section>
-
+        </section> */}
+ <section className="booking-status pb-[3.5rem] px-[2rem]">
+        <PendingBookingsTable bookingsFromServer={bookings} token={token} adminId={user.userId} />
+      </section>
         
       </MenuLayouts>
 
@@ -227,6 +268,31 @@ export default AdminDashboard
 // Edit → fetch existing data → update on submit
 
 // Delete → DELETE /api/event/:id
+
+
+
+
+
+
+
+
+ //  const cookieStore = await cookies();
+  //   const token = cookieStore.get("accessToken")?.value;
+  //   console.log(token);
+  //   let user;
+  //   // get user from server 
+  //    const res = await fetchWithRefresh("/api/auth/me", {
+  //       headers: {
+  //         Cookie: `accessToken=${token}`, // manually bhejna padta hai
+  //       },
+  //     });
+
+  //     if (!res.ok) {
+  //       console.log("Unauthorized or invalid response");
+  //     } else {
+  //        user = await res.json();
+  //       console.log(user);
+  //     }
 
 
 

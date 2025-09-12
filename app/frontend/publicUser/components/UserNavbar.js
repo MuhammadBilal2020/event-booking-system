@@ -6,7 +6,8 @@ import { toast } from "sonner";
 
 export default function UserNavbar({ user, title }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  // console.log(user);
+  console.log(user);
+  
   const handleLogout = async () => {
     try {
       const res = await fetch("/api/auth/logout", {
@@ -56,7 +57,7 @@ export default function UserNavbar({ user, title }) {
             {dropdownOpen && (
               <div className="absolute right-0 text-black mt-2 w-40 bg-white border rounded shadow">
                 <Link
-                  href="/profile"
+                  href={`/frontend/publicUser/userProfile/${user.userId}`}
                   className="block px-4 py-2 text-sm hover:bg-gray-100"
                 >
                   Profile

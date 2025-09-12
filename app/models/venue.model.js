@@ -60,6 +60,12 @@ const VenueSchema = new Schema({
     default: 'active'
   },
 
+  isDeleted: {
+    type: Boolean,
+    default: false
+  },
+
+
   // availableDates: [{
   //   type: Date,
   //   required: true

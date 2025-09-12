@@ -1,9 +1,18 @@
 import connectDB from "@/app/db/dbConnect.js";
 import User from '@/app/models/user.model.js';
+import { verifyTokenAndRole } from "@/app/utils/verifyTokenAndRole";
 export async function GET(req , {params}) {
     const { uid } = await params;
     try {
-        await connectDB()
+        await connectDB() 
+  const authResult = await verifyTokenAndRole("Admin")
+    if (!authResult.success) {
+      return new Response(JSON.stringify({ error: authResult.message }), {
+        status: authResult.status
+      }
+      )
+    }
+        
         const user = await  User.findById((uid))
         console.log(user)
 

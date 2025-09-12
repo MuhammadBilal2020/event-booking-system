@@ -8,8 +8,9 @@ const ViewAllVenuesComp = ({ venues }) => {
 
     const deleteVenue = async (id) => {
         const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/venue/deleteVenue`, {
-            method: 'DELETE',
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
+            credentials: "include",
             body: JSON.stringify({ id: id })
         });
 

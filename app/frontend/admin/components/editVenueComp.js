@@ -5,6 +5,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { MdDelete } from "react-icons/md";
 import handleImageUpload from "@/app/utils/cloudinaryUploader";
 import { toast } from "sonner";
+import { fetchWithRefreshClient } from "@/app/utils/clientInterceptor";
 
 const EditVenueComp = ({ venue, editId }) => {
   // const [amenities, setAmenities] = useState([]);
@@ -119,17 +120,21 @@ const EditVenueComp = ({ venue, editId }) => {
       console.log(formData);
 
 
-      const res = await fetch("/api/venue/editVenue", {
+      const res = await fetchWithRefreshClient("/api/venue/editVenue", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", 
         body: JSON.stringify({
           id: editId,   // 👈 yahan se bhej rahe ho id
           ...formData,  // 👈 aur yahan baki ka form data
         }),
       });
 
+      if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
 
       const result = await res.json();
       setLoading(false);

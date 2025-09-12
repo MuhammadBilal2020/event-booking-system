@@ -1,5 +1,6 @@
 import connectDB from "@/app/db/dbConnect.js";
 import Venue from "@/app/models/venue.model.js"
+import { verifyTokenAndRole } from "@/app/utils/verifyTokenAndRole";
 
 export async function GET(request, { params }) {
     const { vanueId } = await params
@@ -7,6 +8,13 @@ export async function GET(request, { params }) {
 
     try {
         await connectDB();
+          const authResult = await verifyTokenAndRole(["publicUser" , "Admin"])
+                if (!authResult.success) {
+                    return new Response(JSON.stringify({ error: authResult.message }), {
+                        status: authResult.status
+                    }
+                    )
+                }
         const venue = await Venue.findById((vanueId))
 
         if (!venue) {

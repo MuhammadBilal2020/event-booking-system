@@ -4,14 +4,16 @@ import { useState } from "react";
 import NoSidebarLayout from "../../layouts/nosidebarlayout";
 import Link from "next/link";
 import PublicUserLayout from "../../layouts/PublicUserLayout";
+import { toast } from "sonner";
 
 export default function Register() {
   const [formData, setFormData] = useState({
-    username :"",
+    username: "",
     email: "",
     password: "",
-    role : "publicUser"
+    role: "publicUser"
   });
+  let data;
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -24,27 +26,38 @@ export default function Register() {
     e.preventDefault();
     console.log(formData);
     // Login logic yahan ayega
-    const res = await fetch('/api/auth/signup' , {
-       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify({
-        name: formData.username,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,               // "admin"
-       
-      }),
-    })
 
-    const data =await res.json()
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.username,
+          email: formData.email,
+          password: formData.password,
+          role: formData.role,               // "admin"
 
-    if(res.ok){
-      alert("signup Successfull")
+        }),
+      })
 
+
+      if (res.ok) {
+        data = await res.json()
+        toast.success("user registered", {
+          style: {
+            background: "green",
+            color: "white",
+          },
+        });
+
+      }
+      else {
+        alert(data.message)
+      }
+    } catch (error) {
+      console.error("Login error:", error);
     }
-    else{
-      alert(data.message)
-    }
+
 
 
   };
@@ -52,12 +65,12 @@ export default function Register() {
   return (
     <NoSidebarLayout title={"Register"}>
       <div className=" flex items-center justify-center ">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl shadow-md w-[23rem]  max-w-md"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">Signup</h2>
-        {/* <div className="mb-4">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white p-8 rounded-xl shadow-md w-[23rem]  max-w-md"
+        >
+          <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">Signup</h2>
+          {/* <div className="mb-4">
           <label htmlFor="email" className="block text-gray-600 mb-1">
             Username
           </label>
@@ -72,7 +85,7 @@ export default function Register() {
           />
         </div> */}
 
-        <div className="relative mb-6">
+          <div className="relative mb-6">
             <input
               type="username"
               id="username"
@@ -93,7 +106,7 @@ export default function Register() {
           </div>
 
 
-        {/* <div className="mb-4">
+          {/* <div className="mb-4">
           <label htmlFor="email" className="block text-gray-600 mb-1">
             Email
           </label>
@@ -108,7 +121,7 @@ export default function Register() {
           />
         </div> */}
 
-        <div className="relative mb-6">
+          <div className="relative mb-6">
             <input
               type="email"
               id="email"
@@ -130,7 +143,7 @@ export default function Register() {
 
 
 
-        {/* <div className="mb-4">
+          {/* <div className="mb-4">
           <label htmlFor="password" className="block text-gray-600 mb-1">
             Password
           </label>
@@ -145,7 +158,7 @@ export default function Register() {
           />
         </div> */}
 
-        <div className="relative mb-6">
+          <div className="relative mb-6">
             <input
               type="password"
               id="password"
@@ -166,13 +179,13 @@ export default function Register() {
           </div>
 
 
-       
-        <p className="text-[gray] mb-6 text-[.9rem] text-center">Already have an account?
-        
-       <Link className=" text-[black]" href={"/frontend/publicUser/loginUser"}> Go and login</Link>
-       </p>
 
-         <button
+          <p className="text-[gray] mb-6 text-[.9rem] text-center">Already have an account?
+
+            <Link className=" text-[black]" href={"/frontend/publicUser/loginUser"}> Go and login</Link>
+          </p>
+
+          <button
             type="submit"
             className="w-full bg-black text-white py-2 rounded-md font-semibold 
              border-b-[1px] border-transparent 
@@ -183,9 +196,9 @@ export default function Register() {
           </button>
 
 
-      </form>
-      
-    </div>
+        </form>
+
+      </div>
     </NoSidebarLayout>
   );
 }

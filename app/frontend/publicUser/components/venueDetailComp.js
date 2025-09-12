@@ -27,6 +27,8 @@ const meriendaFont = Merienda({
 
 const VenueDetailComp = async ({ venue }) => {
   const user = await getUserFromServer();
+  console.log(venue);
+  
   // console.log(user);
 
   return (

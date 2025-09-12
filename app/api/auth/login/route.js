@@ -9,6 +9,8 @@ export async function POST(request) {
   try {
     await connectDB();
 
+    
+
     const { email, password, adminSecret, role } = await request.json();
 
     if (!email || !password || !role) {

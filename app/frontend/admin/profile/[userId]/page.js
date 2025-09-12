@@ -1,5 +1,4 @@
 import React from 'react'
-import Sidebar from '../../components/sidebar'
 import MenuLayouts from '@/app/frontend/layouts/MenuLayouts'
 import { getUserFromServer } from '@/app/hooks/getUserFromServer.js'
 import { redirect } from 'next/navigation'
@@ -7,22 +6,27 @@ import { fetchWithRefresh } from '@/app/utils/serverInterceptor'
 import { IoPersonSharp } from "react-icons/io5";
 import { Merienda } from "next/font/google"
 import ProfileBookingRecords from '../../components/profileBookingRecords'
+import { cookies } from 'next/headers'
 
 const meriendaFont = Merienda({
   subsets: ['latin'],
   weight: "700",
 });
 
+
+
+
 const AdminProfile = async ({ params }) => {
   const { userId } = await params
-  console.log(userId);
+  // console.log(userId);
 
-  const bookings = [
-    { id: 1, bookingVenue: "Paris", booker: "Sami", Date: "2/11/2025", status: "rejected" },
-    { id: 2, bookingVenue: "Golden Garden", booker: "okasha", Date: "2/12/2025", status: "confirmed" },
-    { id: 3, bookingVenue: "Royal", booker: "Sami", Date: "2/10/2025", status: "cancelled" },
-    { id: 4, bookingVenue: "Lavish", booker: "bilal", Date: "5/8/2025", status: "confirmed" },
-    { id: 5, bookingVenue: "City", booker: "hamza", Date: "6/8/2025", status: "confirmed" },
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+  // console.log(token);
+
+
+  let bookings = [
+
   ]
   let profileUser = []
 
@@ -35,17 +39,60 @@ const AdminProfile = async ({ params }) => {
 
 
 
+  // single user data 
 
-  const res = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/user/getSingleUser/${userId}`
-    ,
+  try {
+     const res = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/user/getSingleUser/${userId}`,
     {
-      cache: 'no-store'
+      cache: 'no-store',
+      headers: {
+        Cookie: `accessToken=${token}`, // manually bhejna padta hai
+      },
+    }
+  )
+if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
     }
 
-
-  )
   profileUser = await res.json()
-  console.log(profileUser);
+  // console.log(profileUser);
+    
+  } catch (error) {
+    console.error("Failed to fetch bookings:", error.message);
+  }
+ 
+
+
+  // get single admin booking handling 
+  try {
+    const res2 = await fetchWithRefresh(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/booking/singleAdminBookings/${userId}`,
+      {
+        cache: 'no-store',
+         headers: {
+          Cookie: `accessToken=${token}`, // manually bhejna padta hai
+        },
+      }
+
+    );
+
+    if (!res2.ok) {
+      throw new Error(`Failed to fetch: ${res2.status}`);
+    }
+
+    const handlingRecords = await res2.json();
+    console.log(handlingRecords.bookings);
+
+    bookings = handlingRecords.bookings
+    console.log(bookings[0].bookingStatus);
+    // Use data here
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+  }
+
+
+
+
 
 
   return (

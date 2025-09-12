@@ -4,11 +4,35 @@ export const runtime = "nodejs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 
-export async function verifyTokenAndRole(requiredRole) {
+// export async function verifyTokenAndRole(requiredRole) {
+//   try {
+//     const cookieStore = await cookies();
+//     const token =  cookieStore.get("accessToken")?.value;
+
+
+//     if (!token) {
+//       return { success: false, status: 401, message: "Unauthorized: No token provided" };
+//     }
+
+//     const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+//     console.log(decoded);
+    
+
+//     if (decoded.role !== requiredRole) {
+//       return { success: false, status: 403, message: "only admins have access " };
+//     }
+
+    
+//     return { success: true, user: decoded }; // decoded contains user data
+//   } catch (err) {
+//     return { success: false, status: 401, message: "Invalid or expired token" };
+//   }
+// }
+
+export async function verifyTokenAndRole(requiredRoles) {
   try {
     const cookieStore = await cookies();
-    const token =  cookieStore.get("accessToken")?.value;
-
+    const token = cookieStore.get("accessToken")?.value;
 
     if (!token) {
       return { success: false, status: 401, message: "Unauthorized: No token provided" };
@@ -16,15 +40,22 @@ export async function verifyTokenAndRole(requiredRole) {
 
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
     console.log(decoded);
-    
 
-    if (decoded.role !== requiredRole) {
-      return { success: false, status: 403, message: "only admins have access to add venue" };
+    // Normalize to array if a single role is passed
+    const rolesArray = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles];
+
+    if (!rolesArray.includes(decoded.role)) {
+      return { success: false, status: 403, message: "Access denied: insufficient permissions" };
     }
 
-    
-    return { success: true, user: decoded }; // decoded contains user data
+    return { success: true, user: decoded };
   } catch (err) {
     return { success: false, status: 401, message: "Invalid or expired token" };
   }
 }
+
+
+
+
+
+

@@ -1,12 +1,20 @@
 import connectDB from "@/app/db/dbConnect";
 import Venue from "@/app/models/venue.model.js"
+import { verifyTokenAndRole } from "@/app/utils/verifyTokenAndRole";
 
 export async function PUT(request) {
     try {
         await connectDB()
+        const authResult = await verifyTokenAndRole("Admin")
+        if (!authResult.success) {
+            return new Response(JSON.stringify({ error: authResult.message }), {
+                status: authResult.status
+            }
+            )
+        }
         const body = await request.json()
         console.log(body);
-        
+
         const { id, ...venue } = body
 
         Object.keys(venue).forEach((key) => {
@@ -29,26 +37,26 @@ export async function PUT(request) {
 
 
         if (!updateVenue) {
-      return new Response(JSON.stringify({ error: "Venue not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+            return new Response(JSON.stringify({ error: "Venue not found" }), {
+                status: 404,
+                headers: { "Content-Type": "application/json" },
+            });
+        }
 
-    return new Response(JSON.stringify({ message: "Venue updated", venue: updateVenue }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-        
+        return new Response(JSON.stringify({ message: "Venue updated", venue: updateVenue }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+
 
 
 
 
     } catch (error) {
         console.log(`update error : ${error}`);
-        
-        return new Response(JSON.stringify({error : "failed to update event"}))
-       
+
+        return new Response(JSON.stringify({ error: "failed to update event" }))
+
     }
 
 }

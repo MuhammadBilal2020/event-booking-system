@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic"; 
+export const dynamic = "force-dynamic";
 import React from 'react'
 import MenuLayouts from '../../layouts/MenuLayouts'
 import VanuesComponent from '../components/venuescomp'
@@ -6,15 +6,17 @@ import { getUserFromServer } from '@/app/hooks/getUserFromServer'
 import { redirect } from 'next/navigation'
 import { fetchWithRefresh } from '@/app/utils/serverInterceptor'
 import PublicUserLayout from '../../layouts/PublicUserLayout'
+import { cookies } from 'next/headers';
 
 const Venues = async () => {
   const user = await getUserFromServer()
   console.log(user);
+  let venues;
 
- 
 
-  // const cookieStore = await cookies();
-  // const token = cookieStore.get("accessToken")?.value;
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
   // console.log(token);
   // let user;
 
@@ -35,18 +37,32 @@ const Venues = async () => {
   if (!user || user.role !== "publicUser") {
     redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/publicUser/loginUser`)
   }
-  const res = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/venue/getVenues`, {
-    cache: 'no-store'
-  });
 
-  const venues = await res.json()
-  console.log(venues)
+
+  try {
+    const res = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/venue/forPublicUser/forUserGetVenues`, {
+      cache: 'no-store',
+      method: "GET",
+      headers: {
+        Cookie: `accessToken=${token}`, // manually bhejna padta hai
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
+    venues = await res.json()
+    console.log(venues)
+  } catch (error) {
+    console.error("Failed to fetch bookings:", error.message);
+  }
 
 
 
 
   return (
-    <PublicUserLayout title={"Venues"} user = {user}>
+    <PublicUserLayout title={"Venues"} user={user}>
       <VanuesComponent venues={venues} />
 
     </PublicUserLayout>

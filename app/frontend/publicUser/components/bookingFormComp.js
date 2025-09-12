@@ -4,45 +4,46 @@ import { fetchWithRefreshClient } from '@/app/utils/clientInterceptor.js';
 import { useRouter } from 'next/navigation';
 
 import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner';
 
 const BookingFormComp = ({ datesAvailable, venue }) => {
   // console.log(datesAvailable);
-   const [availableDates, setAvailableDates] = useState([]);
+  const [availableDates, setAvailableDates] = useState([]);
   const [uid, setUid] = useState('');
   const offers = venue.offers
   console.log(venue);
   const router = useRouter();
 
   const [user, setUser] = useState();
-  
-    // ✅ fetch user in useEffect
-    useEffect(() => {
-      (async () => {
-        const res = await fetchWithRefreshClient("/api/auth/me", {}, "user");
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data);
-        } else {
-          setUser(null);
-        }
-      })();
-    }, []);
-  
-    console.log(user);
-    // console.log(user.userId);
 
-  
-  
-    useEffect(() => {
-      if (user === undefined) return; // abhi loading hai
-      console.log(user.userId);
-      setUid(user.userId)
-  
-      if (!user || user.role !== "publicUser") {
-        router.push("/frontend/admin/loginUser");
+  // ✅ fetch user in useEffect
+  useEffect(() => {
+    (async () => {
+      const res = await fetchWithRefreshClient("/api/auth/me", {}, "user");
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data);
+      } else {
+        setUser(null);
       }
-    }, [user]);
- 
+    })();
+  }, []);
+
+  console.log(user);
+  // console.log(user.userId);
+
+
+
+  useEffect(() => {
+    if (user === undefined) return; // abhi loading hai
+    console.log(user.userId);
+    setUid(user.userId)
+
+    if (!user || user.role !== "publicUser") {
+      router.push("/frontend/admin/loginUser");
+    }
+  }, [user]);
+
 
 
   const [formData, setFormData] = useState({
@@ -53,7 +54,7 @@ const BookingFormComp = ({ datesAvailable, venue }) => {
     userNote: ''
   });
 
- 
+
 
   //   useEffect(() => {
   // setAvailableDates(datesAvailable)
@@ -71,34 +72,46 @@ const BookingFormComp = ({ datesAvailable, venue }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-      const bookingPayload = {
-    venueId: venue._id,
-    userId : uid,
-    date: formData.date,
-    offerId: formData.offerId,
-    totalPrice: Number(formData.totalPrice),
-    paymentMode: formData.paymentMode,
-    userNote: formData.userNote,
-  };
+    const bookingPayload = {
+      venueId: venue._id,
+      userId: uid,
+      date: formData.date,
+      offerId: formData.offerId,
+      totalPrice: Number(formData.totalPrice),
+      paymentMode: formData.paymentMode,
+      userNote: formData.userNote,
+    };
 
-
-     const res = await fetchWithRefreshClient("/api/booking/addBookings", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",   // cookie bhejne ke liye
-            body: JSON.stringify(bookingPayload),
-          });
-
-const result = await res.json();
-      console.log(result);
-
+    try {
+      const res = await fetchWithRefreshClient("/api/booking/addBookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",   // cookie bhejne ke liye
+        body: JSON.stringify(bookingPayload),
+      });
 
       if (res.ok) {
+        const result = await res.json();
         console.log(result);
+        toast.success("booking Successful", {
+                  style: {
+                    background: "green",
+                    color: "white",
+                  },
+                });
       }
-   
+    } catch (error) {
+      console.error("Failed to fetch bookings:", error.message);
+    }
+
+
+
+
+
+
+
   }
 
   return (

@@ -128,6 +128,8 @@ export default function AddVenueForm() {
       console.log(formData); 
 
       // Send to backend
+
+      
       const res = await fetchWithRefreshClient("/api/venue/addVenue", {
         method: "POST",
         headers: {
