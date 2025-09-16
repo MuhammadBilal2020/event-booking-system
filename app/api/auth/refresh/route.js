@@ -55,10 +55,10 @@ export async function POST(req) {
     // Cookie update
     response.cookies.set("accessToken", newAccessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       path: "/",
       sameSite: "lax",
-      maxAge: 60 * 15,
+      maxAge: 15 * 60, //15 min
     });
 
     return response;

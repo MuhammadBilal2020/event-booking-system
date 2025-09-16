@@ -7,13 +7,13 @@ import { cookies } from "next/headers";
 export async function GET(){ 
 try {
     await connectDB()
-    //  const authResult = await verifyTokenAndRole("Admin")   
-    //     if (!authResult.success) {
-    //         return new Response(JSON.stringify({ error: authResult.message }), {
-    //             status: authResult.status
-    //         }
-    //         )
-    //     }
+     const authResult = await verifyTokenAndRole("Admin")   
+        if (!authResult.success) {
+            return new Response(JSON.stringify({ error: authResult.message }), {
+                status: authResult.status
+            }
+            )
+        }
      
     const allVenues = await Venue.find()
     

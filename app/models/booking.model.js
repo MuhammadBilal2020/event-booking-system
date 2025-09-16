@@ -30,11 +30,12 @@ const BookingSchema = new Schema({
     required: true
   },
   
-  bookingStatus: {
-    type: String,
-    enum: ['pending', 'confirmed', 'cancelled' , "rejected"],
-    default: 'pending'
-  },
+ bookingStatus: {
+  type: String,
+  enum: ['pending', 'confirmed', 'cancelled', 'rejected', 'closed'],
+  default: 'pending'
+},
+
 
   actions: [
   {

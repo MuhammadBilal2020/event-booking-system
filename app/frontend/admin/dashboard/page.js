@@ -1,95 +1,123 @@
+"use client"
 export const dynamic = "force-dynamic";
-import React, { cache } from 'react'
+import React, { cache, useEffect, useState } from 'react'
 import MenuLayouts from '../../layouts/MenuLayouts'
-import { getUserFromServer } from '@/app/hooks/getUserFromServer'
-import { redirect } from 'next/navigation'
-import { fetchWithRefresh } from '@/app/utils/serverInterceptor'
-import { cookies } from 'next/headers'
+// import { getUserFromServer } from '@/app/hooks/getUserFromServer'
+
+// import { fetchWithRefresh } from '@/app/utils/serverInterceptor'
+
 import { Badge } from '@/components/ui/badge';
 import { Merienda } from "next/font/google"
 import { IoFilter } from "react-icons/io5";
 import PendingBookingsTable from '../components/pendingBookingTable';
+
+import { fetchWithRefreshClient } from '@/app/utils/clientInterceptor';
+import { useRouter } from 'next/navigation';
 
 const meriendaFont = Merienda({
   subsets: ['latin'],
   weight: "700",
 });
 
+
  
-const AdminDashboard = async () => {
-  let bookings = [
-    
-  ]
-  let cardData;
+const AdminDashboard =  () => {
+    const router = useRouter();
+      const [user, setUser] = useState();
+       const [bookings, setBookings] = useState([]);
+  const [cardData, setCardData] = useState({});
+ 
 // send cookies with every request 
-  const cookieStore = await cookies();
-    const token = cookieStore.get("accessToken")?.value;
-    console.log(token);
+  // const cookieStore = await cookies();
+  //   const token = cookieStore.get("accessToken")?.value;
+  //   console.log(token);
     
 
 
     // get user from cookies 
-   const user = await getUserFromServer()
+  //  const user = await getUserFromServer()
+
+  // if (!user || user.role !== 'Admin') {
+  //   redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/admin/login`
+  //   )
+
+  // }
+
+
+  // ✅ fetch user in useEffect
+  useEffect(() => {
+    (async () => {
+      const res = await fetchWithRefreshClient("/api/auth/me", {}, "user");
+      // console.log(res);
+      
+      if (res.ok) {
+        const data = await res.json();
+        // console.log(data);
+        
+        setUser(data);
+      } else {
+        setUser(null);
+      }
+    })();
+  }, []);
+
   // console.log(user);
 
-  if (!user || user.role !== 'Admin') {
-    redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/admin/login`
-    )
 
-  }
+  useEffect(() => {
+    if (user === undefined) return; // abhi loading hai
+
+    if (!user || user.role !== "Admin") {
+      router.push("/frontend/admin/login");
+    }
+  }, [user]);
+
 
     
     // get pending bookings 
-    try {
+     useEffect(() => {
+    if (!user) return;
 
-      const res = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/booking/getPendingBookings` ,
-     {
-            cache: 'no-store',
-            mothod : "GET",
-            headers: {
-      Cookie: `accessToken=${token}`, // manually bhejna padta hai
-    },
-            
-        }
-     
-  )
-   if (!res.ok) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
-    }
-
-  const getPendings = await res.json();
-  console.log(getPendings);
+    (async () => {
+      try {
+        const res = await fetchWithRefreshClient(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/booking/getPendingBookings`,
+          {
+            method: "GET",
+            credentials: "include",
+            cache: "no-store",
+          }
+        );
+        const data = await res.json();
+        setBookings(data.bookings || []);
+      } catch (err) {
+        console.error("Failed to fetch bookings:", err);
+      }
+    })();
+  }, [user]);
   
-bookings = getPendings.bookings || []; // yahan array mil gya
-      
-    } catch (error) {
-    console.error("Failed to fetch bookings:", error.message);
-      
-    }
-  
-  
- 
-
 // get cards data 
 
-try {
-  const res3 = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/special/getDashboardCards` , {
-    method:"GET",
-  cache : 'no-store',
-    headers: {
-      Cookie: `accessToken=${token}`, // manually bhejna padta hai
-    },
-})
+ useEffect(() => {
+    if (!user) return;
 
-if (!res3.ok) {
-      throw new Error(`HTTP error! Status: ${res3.status}`);
-    }
-
- cardData = await res3.json()
-console.log(cardData);
-} catch (error) {
-  console.error("Failed to fetch bookings:", error.message);
-}
+    (async () => {
+      try {
+        const res = await fetchWithRefreshClient(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/special/getDashboardCards`,
+          {
+            method: "GET",
+            credentials: "include",
+            cache: "no-store",
+          }
+        );
+        const data = await res.json();
+        setCardData(data);
+      } catch (err) {
+        console.error("Failed to fetch dashboard cards:", err);
+      }
+    })();
+  }, [user]);
 
 
 
@@ -240,7 +268,7 @@ console.log(cardData);
 
         </section> */}
  <section className="booking-status pb-[3.5rem] px-[2rem]">
-        <PendingBookingsTable bookingsFromServer={bookings} token={token} adminId={user.userId} />
+        <PendingBookingsTable bookingsFromServer={bookings}  adminId={user?.userId} />
       </section>
         
       </MenuLayouts>

@@ -1,35 +1,69 @@
-import React from 'react'
+"use client"
+import React, { useEffect, useState } from 'react'
 
 import NoSidebarLayout from '@/app/frontend/layouts/nosidebarlayout'
 import BookedDetailedComp from '../../../components/bookedDetailedComp'
-import { fetchWithRefresh } from '@/app/utils/serverInterceptor'
-import { getUserFromServer } from '@/app/hooks/getUserFromServer'
-import { cookies } from 'next/headers'
+import { useRouter } from 'next/navigation'
+import { fetchWithRefreshClient } from '@/app/utils/clientInterceptor.js'
 
-const BookingDetail = async ({ params }) => {
-  const { id } = await params
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  // console.log(id);
-  const user = await getUserFromServer()
-  // console.log(user);
 
-  if (!user || user.role !== 'Admin') {
-    redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/admin/login`
-    )
+const BookingDetail =  ({ params }) => {
+  // const { id } = await params
+  const router = useRouter();
+    const [user, setUser] = useState();
+    const [bookings , setBookings] = useState(null)
+  const { id } = React.use(params);
+  console.log(id);
+  // const cookieStore = await cookies();
+  // const token = cookieStore.get("accessToken")?.value;
+  
+  // const user = await getUserFromServer()
+  
 
-  }
-  let booking1;
+  // if (!user || user.role !== 'Admin') {
+  //   redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/admin/login`
+  //   )
+
+  // }
+  // let booking1;
+  useEffect(() => {
+        (async () => {
+          const res = await fetchWithRefreshClient("/api/auth/me", {}, "user");
+          // console.log(res);
+          
+          if (res.ok) {
+            const data = await res.json();
+            // console.log(data);
+            
+            setUser(data);
+            console.log(data);
+            
+          } else {
+            setUser(null);
+          }
+        })();
+      }, []);
+    
+      // console.log(user);
+      useEffect(() => {
+        if (user === undefined) return; // abhi loading hai
+    
+        if (!user || user.role !== "Admin") {
+          router.push("/frontend/admin/login");
+        }
+      }, [user]);
+      console.log(user);
 
   // get single booking detail  
-  try {
-    const res = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/booking/getSingleBookings/${id}`,
+  useEffect(() => {
+    if(!user ) return;
+(async () => {
+ try {
+    const res = await fetchWithRefreshClient(`${process.env.NEXT_PUBLIC_BASE_URL}/api/booking/getSingleBookings/${id}`,
       {
         cache: 'no-store',
         method: "GET",
-        headers: {
-          Cookie: `accessToken=${token}`, // manually bhejna padta hai
-        },
+       credentials: "include",
       }
     )
 
@@ -37,11 +71,16 @@ const BookingDetail = async ({ params }) => {
       throw new Error(`HTTP error! Status: ${res.status}`);
     }
 
-    booking1 = await res.json()
-    console.log(booking1);
+    const data = await res.json()
+    setBookings(data)
+    // console.log(bookings);
   } catch (error) {
     console.error("Failed to fetch bookings:", error.message);
   }
+})()
+  } ,[user])
+ 
+console.log(bookings);
 
 
 
@@ -64,9 +103,17 @@ const BookingDetail = async ({ params }) => {
   // }
 
   return (
-    <NoSidebarLayout title={"Booking Detial"}>
-      <BookedDetailedComp booking={booking1} adminId={user.userId} />
-    </NoSidebarLayout>
+   <NoSidebarLayout title={"Booking Detial"}>
+    {user && bookings ? (
+      <BookedDetailedComp booking={bookings} adminId={user.userId} />
+    ) : (
+      <div className="flex items-center gap-2 justify-center min-h-screen bg-white">
+            loading
+
+            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+    )}
+  </NoSidebarLayout>
   )
 }
 

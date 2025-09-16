@@ -1,38 +1,69 @@
+"use client"
+
 export const dynamic = "force-dynamic";
-import React from 'react'
+
+import React, { useEffect, useState } from 'react'
 import MenuLayouts from '@/app/frontend/layouts/MenuLayouts'
-
-
 import ViewAllVenuesComp from '../../components/viewAllVenuesComp';
-import { getUserFromServer } from '@/app/hooks/getUserFromServer';
-import { redirect } from 'next/navigation';
-import { fetchWithRefresh } from '@/app/utils/serverInterceptor';
-import { cookies } from 'next/headers';
+import {  useRouter } from 'next/navigation';
+import { fetchWithRefreshClient } from '@/app/utils/clientInterceptor.js';
 
 
-const HandleVenues = async () => {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("accessToken")?.value;
-    const user = await getUserFromServer()
-    if (!user || user.role !== 'Admin') {
-        redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/admin/login`
-        )
+const HandleVenues =  () => {
+    const router = useRouter();
+    const [user, setUser] = useState();
+        const [venues, setVenues] = useState(null); // 👈 state for venue
+    
+    // const cookieStore = await cookies();
+    // const token = cookieStore.get("accessToken")?.value;
+    // console.log(token);
 
-    }
+     useEffect(() => {
+          (async () => {
+            const res = await fetchWithRefreshClient("/api/auth/me", {}, "user");
+            // console.log(res);
+            
+            if (res.ok) {
+              const data = await res.json();
+              // console.log(data);
+              
+              setUser(data);
+            } else {
+              setUser(null);
+            }
+          })();
+        }, []);
+      
+        // console.log(user);
+        useEffect(() => {
+          if (user === undefined) return; // abhi loading hai
+      
+          if (!user || user.role !== "Admin") {
+            router.push("/frontend/admin/login");
+          }
+        }, [user]);
+        console.log(user);
+    
+    // const user = await getUserFromServer()
+    // if (!user || user.role !== 'Admin') {
+    //     redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/admin/login`
+    //     )
 
-    let venues;
+    // }
+
+    // let venues;
 
 
     // get all venues data 
-    try {
+    useEffect( ()  => {
+        (async () => {
+              try {
 
-        const res = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/venue/getVenues`,
+        const res = await fetchWithRefreshClient(`${process.env.NEXT_PUBLIC_BASE_URL}/api/venue/getVenues`,
             {
-                cache: 'no-store',
                 method: "GET",
-                headers: {
-                    Cookie: `accessToken=${token}`, // manually bhejna padta hai
-                },
+                credendials :"include",
+                cache: 'no-store',
             }
 
         )
@@ -40,12 +71,17 @@ const HandleVenues = async () => {
         if (!res.ok) {
             throw new Error(`HTTP error! Status: ${res.status}`);
         }
-        venues = await res.json()
+        const data = await res.json()
+        setVenues(data)
 
     } catch (error) {
         console.error("Failed to fetch bookings:", error.message);
 
     }
+        })()
+
+    },[user])
+  
 
     // console.log(venues)
 

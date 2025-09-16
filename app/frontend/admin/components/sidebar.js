@@ -29,7 +29,7 @@ export default function Sidebar({ title }) {
     })();
   }, []);
 
-  console.log(user);
+  // console.log(user);
 
 
   useEffect(() => {
@@ -174,7 +174,7 @@ export default function Sidebar({ title }) {
               >
                 <li>
                   <Link
-                    href="#"
+                    href="frontend/admin/boooking/bookings"
                     className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group ml-5"
                   >
                     <span className="text-gray-500 group-hover:text-gray-900">

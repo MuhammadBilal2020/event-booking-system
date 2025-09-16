@@ -1,53 +1,87 @@
+"use client"
+
 export const dynamic = "force-dynamic";
-import React from 'react'
 
-
+import React, { useEffect, useState } from 'react'
 import MenuLayouts from '@/app/frontend/layouts/MenuLayouts.js'
-import { getUserFromServer } from '@/app/hooks/getUserFromServer.js'
-import { redirect } from 'next/navigation.js'
-import { fetchWithRefresh } from '@/app/utils/serverInterceptor.js';
 import BookingsTable from '../../components/bookingTable.js';
-import { cookies } from 'next/headers.js';
+import { fetchWithRefreshClient } from '@/app/utils/clientInterceptor.js';
+import { useRouter } from 'next/navigation.js';
 
 
 
-const Booking = async () => {
+const Booking =  () => {
+    const [user, setUser] = useState();
+    const [bookings , setBookings] = useState(null)
+    const router = useRouter();
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
-  console.log(token);
-  const user = await getUserFromServer()
+  // const cookieStore = await cookies();
+  // const token = cookieStore.get("accessToken")?.value; 
+  // console.log(token);
+  // const user = await getUserFromServer()
 
-  if (!user || user.role !== "Admin") {
-    redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/admin/login`)
-  }
-  let Bookings;
+  // if (!user || user.role !== "Admin") {
+  //   redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/admin/login`)
+  // }
 
-  // alag bg colors
+
+  useEffect(() => {
+           (async () => {
+             const res = await fetchWithRefreshClient("/api/auth/me", {}, "user");
+             // console.log(res);
+             
+             if (res.ok) {
+               const data = await res.json();
+               // console.log(data);
+               
+               setUser(data);
+             } else {
+               setUser(null);
+             }
+           })();
+         }, []);
+       
+         // console.log(user);
+         useEffect(() => {
+           if (user === undefined) return; // abhi loading hai
+       
+           if (!user || user.role !== "Admin") {
+             router.push("/frontend/admin/login");
+           }
+         }, [user]);
+         console.log(user);
 
 
 
   // get all bookings 
+  useEffect(() =>{
+(async () => {
   try {
-    const res = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/booking/getBookings`,
+    const res = await fetchWithRefreshClient(`${process.env.NEXT_PUBLIC_BASE_URL}/api/booking/getBookings`,
       {
-        cache: 'no-store',
         method: "GET",
-        headers: {
-          Cookie: `accessToken=${token}`, // manually bhejna padta hai
-        },
+        credendials :"include",
+        cache: 'no-store'
+        
       }
     )
+    console.log(res);
+    
     if (!res.ok) {
       throw new Error(`HTTP error! Status: ${res.status}`);
     }
 
-     Bookings = await res.json()
-    console.log(Bookings);
-
-  } catch (error) {
-    console.error("Failed to fetch bookings:", error.message);
-  }
+     const data = await res.json()
+     setBookings(data)
+     
+    } catch (error) {
+      console.error("Failed to fetch bookings:", error.message);
+    }
+    
+  })()
+} , [user])
+console.log(bookings);
+  
 
 
 
@@ -58,10 +92,10 @@ const Booking = async () => {
 
 
       </section>
-
-      <section className="booking-status pb-[3.5rem]">
-        <BookingsTable bookingsFromServer={Bookings} adminId={user.userId} />
-      </section>
+{bookings && <section className="booking-status pb-[3.5rem]">
+        <BookingsTable bookingsFromServer={bookings.bookings} adminId={user.userId} />
+      </section>}
+      
 
     </MenuLayouts>
   )

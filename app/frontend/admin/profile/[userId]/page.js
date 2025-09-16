@@ -1,12 +1,12 @@
-import React from 'react'
+"use client"
+import React, { useEffect, useState } from 'react'
 import MenuLayouts from '@/app/frontend/layouts/MenuLayouts'
-import { getUserFromServer } from '@/app/hooks/getUserFromServer.js'
-import { redirect } from 'next/navigation'
-import { fetchWithRefresh } from '@/app/utils/serverInterceptor'
+
 import { IoPersonSharp } from "react-icons/io5";
 import { Merienda } from "next/font/google"
-import ProfileBookingRecords from '../../components/profileBookingRecords'
-import { cookies } from 'next/headers'
+import { fetchWithRefreshClient } from '@/app/utils/clientInterceptor'
+import { useRouter } from 'next/navigation';
+import ProfileBookingRecords from '../../components/profileBookingRecords';
 
 const meriendaFont = Merienda({
   subsets: ['latin'],
@@ -16,79 +16,119 @@ const meriendaFont = Merienda({
 
 
 
-const AdminProfile = async ({ params }) => {
-  const { userId } = await params
+const AdminProfile = ({ params }) => {
+  const { userId } = React.use(params);
+  const router = useRouter();
+  const [user, setUser] = useState();
+  const [bookings, setBookings] = useState(null)
+  const [profileUser, setProfileUser] = useState(null)
   // console.log(userId);
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
+  // const cookieStore = await cookies();
+  // const token = cookieStore.get("accessToken")?.value;
   // console.log(token);
 
 
-  let bookings = [
 
-  ]
-  let profileUser = []
+  // let profileUser = []
 
-  const user = await getUserFromServer()
-  if (!user || user.role !== 'Admin') {
-    redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/admin/login`
-    )
+  // const user = await getUserFromServer()
+  // if (!user || user.role !== 'Admin') {
+  //   redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/frontend/admin/login`
+  //   )
 
-  }
+  // }
+
+  useEffect(() => {
+    (async () => {
+      const res = await fetchWithRefreshClient("/api/auth/me", {}, "user");
+      // console.log(res);
+
+      if (res.ok) {
+        const data = await res.json();
+        // console.log(data);
+
+        setUser(data);
+        console.log(data);
+
+      } else {
+        setUser(null);
+      }
+    })();
+  }, []);
+
+  // console.log(user);
+  useEffect(() => {
+    if (user === undefined) return; // abhi loading hai
+
+    if (!user || user.role !== "Admin") {
+      router.push("/frontend/admin/login");
+    }
+  }, [user]);
+  console.log(user);
 
 
 
   // single user data 
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetchWithRefreshClient(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/user/getSingleUser/${userId}`,
+          {
+            cache: 'no-store',
+            method: "GET",
+            credentials: "include",
 
-  try {
-     const res = await fetchWithRefresh(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/user/getSingleUser/${userId}`,
-    {
-      cache: 'no-store',
-      headers: {
-        Cookie: `accessToken=${token}`, // manually bhejna padta hai
-      },
-    }
-  )
-if (!res.ok) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
-    }
+          }
+        )
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
 
-  profileUser = await res.json()
-  // console.log(profileUser);
-    
-  } catch (error) {
-    console.error("Failed to fetch bookings:", error.message);
-  }
- 
+        const data = await res.json()
+        setProfileUser(data)
+        // console.log(profileUser);
+
+      } catch (error) {
+        console.error("Failed to fetch bookings:", error.message);
+      }
+    })()
+  }, [user])
+
+
 
 
   // get single admin booking handling 
-  try {
-    const res2 = await fetchWithRefresh(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/booking/singleAdminBookings/${userId}`,
-      {
-        cache: 'no-store',
-         headers: {
-          Cookie: `accessToken=${token}`, // manually bhejna padta hai
-        },
+  useEffect(() => {
+    (async () => {
+      try {
+        const res2 = await fetchWithRefreshClient(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/booking/singleAdminBookings/${userId}`,
+          {
+            cache: 'no-store',
+            method: "GET",
+            credentials: "include",
+          }
+
+        );
+
+        if (!res2.ok) {
+          throw new Error(`Failed to fetch: ${res2.status}`);
+        }
+
+        const handlingRecords = await res2.json();
+        console.log(handlingRecords.bookings);
+
+        const data = handlingRecords.bookings
+        setBookings(data)
+
+        // Use data here
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
       }
+    })()
+  }, [user])
 
-    );
-
-    if (!res2.ok) {
-      throw new Error(`Failed to fetch: ${res2.status}`);
-    }
-
-    const handlingRecords = await res2.json();
-    console.log(handlingRecords.bookings);
-
-    bookings = handlingRecords.bookings
-    console.log(bookings[0].bookingStatus);
-    // Use data here
-  } catch (error) {
-    console.error('Error fetching bookings:', error);
-  }
 
 
 
@@ -102,21 +142,33 @@ if (!res.ok) {
       <MenuLayouts title={"Profile"}>
 
 
+        {profileUser && bookings ? (
+          <><div className='flex w-[20rem]  gap-3 bg-[white] '>
+            <p className=' text-white m-0 bg-[black]' > <IoPersonSharp size={55} /></p>
 
-        <div className='flex w-[20rem]  gap-3 bg-[white] '>
-          <p className=' text-white m-0 bg-[black]' > <IoPersonSharp size={55} /></p>
+            <div>
+              <p className='text-[1.5rem] font-semibold'>
+                {profileUser.name}
+              </p>
 
-          <div>
-            <p className='text-[1.5rem] font-semibold'>
-              {profileUser.name}
-            </p>
+              <p className={`${meriendaFont.className} text-[white]  rounded bg-black text-center text-[.7rem] m-0`}>{profileUser.role}</p>
 
-            <p className={`${meriendaFont.className} text-[white]  rounded bg-black text-center text-[.7rem] m-0`}>{profileUser.role}</p>
 
+            </div>
 
           </div>
+            <ProfileBookingRecords bookings={bookings} />
+          </>
+        ) : <div className="flex items-center gap-2 justify-center min-h-screen bg-white">
+          loading
 
-        </div>
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        </div>}
+
+        {/* {bookings &&
+
+        } */}
+
 
         {/* past booking recors  */}
 
@@ -199,7 +251,6 @@ if (!res.ok) {
 
                 </div> */}
 
-        <ProfileBookingRecords bookings={bookings} />
 
 
       </MenuLayouts>
